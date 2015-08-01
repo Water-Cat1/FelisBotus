@@ -13,7 +13,7 @@ import org.jdom2.output.XMLOutputter;
 
 public class XMLManager {
 
-	private boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands) throws IOException {
+	public static boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands) throws IOException {
 		Document doc = new Document();
 		//root setup
 		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotusConfig>
@@ -65,5 +65,10 @@ public class XMLManager {
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
 		xmlOut.output(doc, new FileWriter(new File(Main.configFile)));
 		return true;
+	}
+
+	public static SaveData loadXML() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
