@@ -10,12 +10,11 @@ public class XMLManager {
 	private void compileConfigFile(List<FelisBotus> bots) {
 		Document doc = new Document();
 		//root setup
-		Element elemRoot = new Element("FelisBotusConfig");
-		Element elemBotList = new Element("BotList");
-		elemRoot.addContent(elemBotList);
+		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotus>
+		Element elemBotList = new Element("BotList");//<BotList>
 		for (FelisBotus currBot:bots){
 			//save bot name
-			Element elemCurrBot = new Element(currBot.getName());
+			Element elemCurrBot = new Element(currBot.getName());//<Bot Owner="" Login="" [Pass=""]>
 			//save bot owner
 			elemCurrBot.setAttribute("Owner", currBot.getOwner());
 			//save bot login
@@ -25,25 +24,31 @@ public class XMLManager {
 			if (loginPass != null){
 				elemCurrBot.setAttribute("Pass", loginPass);
 			}
-			elemBotList.addContent(elemCurrBot);
-			IRCServer currServer = currBot.getIRCServer();
-			Element elemCurrServer = new Element(currServer.getServerName());
-			
+			//save single server associated with this bot
+			IRCServer currServer = currBot.getIRCServer(); 
+			Element elemCurrServer = new Element(currServer.getServerName());//<Server address="">
+			elemCurrServer.setAttribute("address", currServer.getServerAddress());
+			//add support here for servers with passwords if I need it
+			//add channels associated with this server
+			Element currServerChannels = new Element("Channels");//<Channels>
+			for (IRCChannel currChannel:currServer.getChannels()){
+				Element elemCurrChannel = new Element(currChannel.getName()); //<Channel> //Do channels have certain things like passwords?
+				//save ops for this channel
+				Element elemCurrChannelOps = new Element("Ops");//<Ops>
+				for (String currOp:currChannel.getOpList()){
+					elemCurrChannelOps.addContent(new Element(currOp));//<opName/>
+				}
+				elemCurrChannel.addContent(elemCurrChannelOps);// </Ops>
+				currServerChannels.addContent(elemCurrChannel); //</Channel>
+			}
+			elemCurrServer.addContent(currServerChannels);//</Channels>
+			elemCurrBot.addContent(elemCurrServer);//</Server>
+			elemBotList.addContent(elemCurrBot);//</Bot>
 			
 		}
+		elemRoot.addContent(elemBotList);//</BotList>
 
 
-		//elemRoot.addContent(elemPass);
-		//Save server
-		//if (server != null){
-//			Element elemServer = new Element("Server");
-//			elemServer.setAttribute("Name", server.getServerName());
-//			elemServer.setAttribute("Address", server.getServerAddress());
-//			Element elemChannelList = new Element("Chennels");
-//			//channels of the server
-//			for(String currChannel:server.getChannels()){
-//				Element elemCurrChannel = new Element(currChannel);
-//			}
-//		}
+
 	}
 }
