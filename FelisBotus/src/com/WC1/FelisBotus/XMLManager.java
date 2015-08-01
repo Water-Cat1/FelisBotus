@@ -1,4 +1,4 @@
-package com.WC1.CatBot;
+package com.WC1.FelisBotus;
 
 import java.io.File;
 import java.io.FileWriter;

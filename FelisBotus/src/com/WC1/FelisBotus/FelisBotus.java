@@ -6,7 +6,7 @@
  *
  *
  */
-package com.WC1.CatBot;
+package com.WC1.FelisBotus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class FelisBotus extends PircBot {
 
 
 	public FelisBotus() {
-		try{
+		try{//TODO put this here or in main? I'm thinking move to main, put only one constructer where its put infomration in to initilize bot immediately
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 			System.out.printf("No config file found\nInitilizing for first time use\n\nWhat is your IRC Name? (Not the bot's)");
 			owner = input.readLine();
@@ -65,7 +65,7 @@ public class FelisBotus extends PircBot {
 
 	public FelisBotus(File config) {
 		try {
-			Element rootElem = (new SAXBuilder().build(config)).getRootElement();
+			Element rootElem = (new SAXBuilder().build(config)).getRootElement();//TODO move to XML manager as this is no longer handled by the bot
 
 		} catch (JDOMException | IOException e) {
 			// TODO Auto-generated catch block

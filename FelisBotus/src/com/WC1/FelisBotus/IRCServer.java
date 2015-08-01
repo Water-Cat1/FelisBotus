@@ -1,4 +1,4 @@
-package com.WC1.CatBot;
+package com.WC1.FelisBotus;
 
 import java.util.Collections;
 import java.util.HashSet;

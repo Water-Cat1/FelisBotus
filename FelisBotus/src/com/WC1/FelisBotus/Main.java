@@ -1,4 +1,4 @@
-package com.WC1.CatBot;
+package com.WC1.FelisBotus;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class Main {
 		for (FelisBotus bot:bots){
 			bot.connectAuto();
 		}
-
+		//TODO from here listen to console for specific commands
 	}
 	
 	public static boolean save() throws IOException{
