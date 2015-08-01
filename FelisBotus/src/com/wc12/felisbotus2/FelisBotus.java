@@ -6,22 +6,19 @@
  *
  *
  */
-package com.WC1.FelisBotus;
+package com.wc12.felisbotus2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
+
+import com.wc12.felisbotus2.irc.IRCServer;
 
 public class FelisBotus extends PircBot {       
 
@@ -31,9 +28,7 @@ public class FelisBotus extends PircBot {
 	public boolean voiceUsers = true;
 
 	private String owner;
-	private IRCServer server;
-	private Map<String,String> responses = new HashMap<String,String>();
-	private Set<String> ops = new HashSet<String>();
+	private IRCServer server; //this thing will contain all info on the server, channels and ops in said channels.
 	private String loginPass;
 	/*
 	 *   ops.add(sender);
@@ -107,7 +102,7 @@ public class FelisBotus extends PircBot {
 		System.out.println(line + "\n");
 	}
 
-	public void messageSender(String message){
+	public void messageSender(String message){//TODO ask jenny whats going on with this?
 		String channels = "#c3";
 		sendMessage("#c3", message);
 		sendRawLine(message);
@@ -122,7 +117,7 @@ public class FelisBotus extends PircBot {
 		sendMessage(sender, "I am not available for private discussions at this time.");
 	}
 
-	public void onUserList(String channel, User[] users) {
+	public void onUserList(String channel, User[] users) {//TODO op people who are in this list and are on the op list
 		for (int i = 0; i < users.length; i++) {
 			User user = users[i];
 			String nick = user.getNick();

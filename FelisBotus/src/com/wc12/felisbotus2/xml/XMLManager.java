@@ -1,4 +1,4 @@
-package com.WC1.FelisBotus;
+package com.wc12.felisbotus2.xml;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +10,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+
+import com.wc12.felisbotus2.FelisBotus;
+import com.wc12.felisbotus2.Main;
+import com.wc12.felisbotus2.irc.IRCChannel;
+import com.wc12.felisbotus2.irc.IRCServer;
 
 public class XMLManager {
 

@@ -1,4 +1,4 @@
-package com.WC1.FelisBotus;
+package com.wc12.felisbotus2.irc;
 
 import java.util.Set;
 
