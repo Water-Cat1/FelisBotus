@@ -6,13 +6,13 @@ import java.util.Set;
 
 public class IRCServer {
 
-	private Set<String> channels = new HashSet<String>();
+	private Set<IRCChannel> channels = new HashSet<IRCChannel>();
 	private String serverAddress;
 	private String serverName;
 	
 	
 	public IRCServer(String serverName, String serverAddress,
-			Set<String> channels) {
+			Set<IRCChannel> channels) {
 		super();
 		this.serverName = serverName;
 		this.serverAddress = serverAddress;
@@ -20,7 +20,7 @@ public class IRCServer {
 	}
 
 
-	public Set<String> getChannels() {
+	public Set<IRCChannel> getChannels() {
 		return Collections.unmodifiableSet(channels);
 	}
 
@@ -34,7 +34,7 @@ public class IRCServer {
 		return serverName;
 	}
 	
-	public boolean addChannel(String newChannel){
+	public boolean addChannel(IRCChannel newChannel){
 		return channels.add(newChannel);
 	}
 	

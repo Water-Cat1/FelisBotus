@@ -34,7 +34,7 @@ public class FelisBotus extends PircBot {
 	private IRCServer server;
 	private Map<String,String> responses = new HashMap<String,String>();
 	private Set<String> ops = new HashSet<String>();
-	private String pass;
+	private String loginPass;
 	/*
 	 *   ops.add(sender);
 	 */
@@ -53,10 +53,10 @@ public class FelisBotus extends PircBot {
 			String in = input.readLine();
 			if (in.startsWith("y") || in.startsWith("Y")){
 				System.out.printf("Please enter a password");
-				pass = input.readLine();
+				loginPass = input.readLine();
 			}
 			this.setVersion(Main.version);
-			compileConfigFile();
+			//compileConfigFile();
 		}
 		catch(IOException e){}
 	}
@@ -169,6 +169,22 @@ public class FelisBotus extends PircBot {
 	public void connectAuto() {
 		// TODO Auto-generated method stub
 
+	}
+
+
+
+	public String getOwner() {
+		return owner;
+	}
+
+
+
+	public String getLoginPass() {
+		return loginPass;
+	}
+	
+	public IRCServer getIRCServer() {
+		return server;
 	}
 
 
