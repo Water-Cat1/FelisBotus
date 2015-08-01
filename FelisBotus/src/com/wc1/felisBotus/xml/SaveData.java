@@ -1,9 +1,9 @@
-package com.wc12.felisbotus2.xml;
+package com.wc1.felisBotus.xml;
 
 import java.util.List;
 import java.util.Map;
 
-import com.wc12.felisbotus2.FelisBotus;
+import com.wc1.felisBotus.FelisBotus;
 
 public class SaveData {
 

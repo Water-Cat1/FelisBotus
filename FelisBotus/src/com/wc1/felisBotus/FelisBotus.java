@@ -6,7 +6,7 @@
  *
  *
  */
-package com.wc12.felisbotus2;
+package com.wc1.felisBotus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
-import com.wc12.felisbotus2.irc.IRCServer;
+import com.wc1.felisBotus.irc.IRCServer;
 
 public class FelisBotus extends PircBot {       
 

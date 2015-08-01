@@ -1,4 +1,4 @@
-package com.wc12.felisbotus2;
+package com.wc1.felisBotus;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.wc12.felisbotus2.xml.SaveData;
-import com.wc12.felisbotus2.xml.XMLManager;
+import com.wc1.felisBotus.xml.SaveData;
+import com.wc1.felisBotus.xml.XMLManager;
 
 public class Main {
 

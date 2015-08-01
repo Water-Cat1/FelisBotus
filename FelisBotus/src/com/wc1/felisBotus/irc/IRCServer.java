@@ -1,4 +1,4 @@
-package com.wc12.felisbotus2.irc;
+package com.wc1.felisBotus.irc;
 
 import java.util.Collections;
 import java.util.HashSet;
