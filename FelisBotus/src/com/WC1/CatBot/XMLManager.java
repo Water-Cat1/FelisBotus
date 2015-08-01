@@ -1,16 +1,22 @@
 package com.WC1.CatBot;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 public class XMLManager {
 
-	private void compileConfigFile(List<FelisBotus> bots) {
+	private boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands) throws IOException {
 		Document doc = new Document();
 		//root setup
-		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotus>
+		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotusConfig>
 		Element elemBotList = new Element("BotList");//<BotList>
 		for (FelisBotus currBot:bots){
 			//save bot name
@@ -47,8 +53,17 @@ public class XMLManager {
 			
 		}
 		elemRoot.addContent(elemBotList);//</BotList>
-
-
-
+		Element elemCommands = new Element("Commands");//<Commands>
+		for (String key:commands.keySet()){
+			Element elemCurrCommand = new Element(key);//<Command response=""/>
+			elemCurrCommand.setAttribute("Response", commands.get(key));
+			elemCommands.addContent(elemCurrCommand);
+		}
+		elemRoot.addContent(elemCommands);//</Commands>
+		doc.setRootElement(elemRoot); //</FelisBotusConfig>
+		
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		xmlOut.output(doc, new FileWriter(new File(Main.configFile)));
+		return true;
 	}
 }
