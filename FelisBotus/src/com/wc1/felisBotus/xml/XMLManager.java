@@ -40,8 +40,7 @@ public class XMLManager {
 			}
 			//save single server associated with this bot
 			IRCServer currServer = currBot.getIRCServer(); 
-			Element elemCurrServer = new Element("Server");//<Server Name="" Address="">
-			elemCurrServer.setAttribute("Name", currServer.getServerName());
+			Element elemCurrServer = new Element("Server");//<Server Address="">
 			elemCurrServer.setAttribute("Address", currServer.getServerAddress());
 			//add support here for servers with passwords if I need it
 			//add channels associated with this server
@@ -88,7 +87,6 @@ public class XMLManager {
 			String currLogin = elemCurrBot.getAttributeValue("Login");
 			String currLoginPass = elemCurrBot.getAttributeValue("LoginPass"); //will return null if no password is saved
 			Element elemCurrServer = elemCurrBot.getChild("Server");
-			String currServerName = elemCurrServer.getAttributeValue("Name");
 			String currServerAddress = elemCurrServer.getAttributeValue("Address");
 			Element elemChannels = elemCurrServer.getChild("Channels");
 			Set<IRCChannel> channels = new HashSet<IRCChannel>();
@@ -102,7 +100,7 @@ public class XMLManager {
 				IRCChannel currChannel = new IRCChannel(currChannelName, ops);
 				channels.add(currChannel);
 			}
-			IRCServer currServer = new IRCServer(currServerName, currServerAddress, channels);
+			IRCServer currServer = new IRCServer(currServerAddress, channels);
 			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currLogin, currLoginPass, currServer);
 			bots.add(currBot);
 		}

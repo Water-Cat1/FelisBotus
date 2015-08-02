@@ -8,13 +8,11 @@ public class IRCServer {
 
 	private Set<IRCChannel> channels = new HashSet<IRCChannel>();
 	private String serverAddress;
-	private String serverName; //i guess this technically is not needed?
 
 
-	public IRCServer(String serverName, String serverAddress,
+	public IRCServer(String serverAddress,
 			Set<IRCChannel> channels) {
 		super();
-		this.serverName = serverName;
 		this.serverAddress = serverAddress;
 		this.channels = channels;
 	}
@@ -27,11 +25,6 @@ public class IRCServer {
 
 	public String getServerAddress() {
 		return serverAddress;
-	}
-
-
-	public String getServerName() {
-		return serverName;
 	}
 
 	public boolean addChannel(IRCChannel newChannel){
