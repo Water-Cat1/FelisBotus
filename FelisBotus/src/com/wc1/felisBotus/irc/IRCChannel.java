@@ -3,11 +3,11 @@ package com.wc1.felisBotus.irc;
 import java.util.Set;
 
 public class IRCChannel {
-	
+
 	private String name;
 	private Set<String> ops;
-	
-	
+
+
 	public IRCChannel(String name, Set<String> ops) {
 		super();
 		this.ops = ops;
@@ -22,11 +22,11 @@ public class IRCChannel {
 	public Set<String> getOpList() {
 		return ops;
 	}
-	
+
 	public boolean addOp(String name){
 		return ops.add(name);
 	}
-	
+
 	public boolean removeOp(String name){
 		return ops.remove(name);
 	}

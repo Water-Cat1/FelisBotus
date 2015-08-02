@@ -9,7 +9,7 @@ public class SaveData {
 
 	private List<FelisBotus> bots;
 	private Map<String, String> Commands;
-	
+
 	public SaveData(List<FelisBotus> bots, Map<String, String> commands) {
 		super();
 		this.bots = bots;
@@ -23,6 +23,6 @@ public class SaveData {
 	public Map<String, String> getCommands() {
 		return Commands;
 	}
-	
-	
+
+
 }

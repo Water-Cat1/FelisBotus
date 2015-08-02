@@ -16,7 +16,7 @@ public class Main {
 
 	private static List<FelisBotus> bots;
 	private static Map<String, String> commands;
-	
+
 	private static boolean noSave = false;
 
 	//public static String Network = "irc.esper.net";
@@ -53,9 +53,9 @@ public class Main {
 			SaveData loadedData;
 			try {
 				loadedData = XMLManager.loadConfigFile();
-			
-			bots = loadedData.getBots();
-			commands = loadedData.getCommands();
+
+				bots = loadedData.getBots();
+				commands = loadedData.getCommands();
 			}
 			catch (JDOMException | IOException e) {
 				// TODO Auto-generated catch block
@@ -75,23 +75,23 @@ public class Main {
 		}
 		//TODO from here listen to console for specific commands
 	}
-	
+
 	public static boolean save() throws IOException{
 		if (noSave) return false;
 		XMLManager.compileConfigFile(bots, commands);
 		return true;
 	}
-	
+
 	//TODO Method to reload all bots?
-	
+
 	public static String getCommand(String command){
 		return commands.get(command);
 	}
-	
+
 	public static String putCommand(String command, String response){
 		return commands.put(command, response);
 	}
-	
+
 	//TODO create a new bot on command
 	//TODO remove a bot on command
 }

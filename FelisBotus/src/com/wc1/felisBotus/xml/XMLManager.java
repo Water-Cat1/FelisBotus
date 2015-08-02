@@ -85,7 +85,7 @@ public class XMLManager {
 		for (Element elemCurrBot:elemBotList.getChildren()){
 			String currBotName = elemCurrBot.getName();
 			String currBotOwner = elemCurrBot.getAttributeValue("Owner");
-			String currServerLogin = elemCurrBot.getAttributeValue("Login");
+			String currLogin = elemCurrBot.getAttributeValue("Login");
 			String currLoginPass = elemCurrBot.getAttributeValue("LoginPass"); //will return null if no password is saved
 			Element elemCurrServer = elemCurrBot.getChild("Server");
 			String currServerName = elemCurrServer.getAttributeValue("Name");
@@ -103,7 +103,7 @@ public class XMLManager {
 				channels.add(currChannel);
 			}
 			IRCServer currServer = new IRCServer(currServerName, currServerAddress, channels);
-			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currServerLogin, currLoginPass, currServer);
+			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currLogin, currLoginPass, currServer);
 			bots.add(currBot);
 		}
 		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
