@@ -16,11 +16,8 @@ public class Main {
 
 	private static List<FelisBotus> bots;
 	private static Map<String, String> commands;
-
 	private static boolean noSave = false;
-
-	//public static String Network = "irc.esper.net";
-	//public static String Channel = "#C3";
+	
 	public static final String version = "C3 Java IRC Bot - V0.2.W";
 	public static final String configFile = "./config.xml";
 
