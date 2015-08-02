@@ -106,14 +106,11 @@ public class XMLManager {
 			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currServerLogin, currLoginPass, currServer);
 			bots.add(currBot);
 		}
-
-
-
-
 		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
-
-
-
+		Element elemCommands = elemRoot.getChild("Commands");
+		for (Element currCommand:elemCommands.getChildren()){
+			commands.put(currCommand.getName(), currCommand.getAttributeValue("Response"));
+		}
 		return new SaveData(bots,commands);
 	}
 }
