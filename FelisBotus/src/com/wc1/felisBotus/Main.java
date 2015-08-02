@@ -36,16 +36,17 @@ public class Main {
 		if(reset || !config.exists()){
 			if (!config.exists()) System.out.printf("No config file found in expected place\n");
 			console.printf("Initilizing for first time use\n\n");
+			//bot info
 			String owner = console.readLine("What is your IRC Name? (Not the bot's)\n");
 			String botName = console.readLine("What would you like this bot to be called?\n");
-			String Login = console.readLine("What is the login email address for the bot?\n");
-			String response = console.readLine("Would you like to save a password for authentication?\n(Not Advised; this will be stored in plaintext)\n");
-			if (response.startsWith("y") || response.startsWith("Y")){
-				char[] loginPass = console.readPassword("Please enter a password");
+			String login = console.readLine("What is the login email address for the bot?\n");
+			String response = console.readLine("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
+			char[] loginPass = null;
+			if (response.startsWith("y") || response.startsWith("Y")){//could probably be smart about this but eh, only expect y/n or yes/no
+				loginPass = console.readPassword("Please enter a password");
 			}
-			
 			bots = new ArrayList<FelisBotus>();
-			bots.add(new FelisBotus());//initilize new bot
+			bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
 		}
 		else {
 			//initilize bots with previous file
