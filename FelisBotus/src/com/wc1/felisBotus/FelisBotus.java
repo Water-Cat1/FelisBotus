@@ -33,24 +33,7 @@ public class FelisBotus extends PircBot {
 
 
 	public FelisBotus() {
-		try{//TODO put this here or in main? I'm thinking move to main, put only one constructer where its put infomration in to initilize bot immediately
-			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-			System.out.printf("No config file found\nInitilizing for first time use\n\nWhat is your IRC Name? (Not the bot's)");
-			owner = input.readLine();
-			System.out.printf("What would you like this bot to be called?\n");
-			this.setName(input.readLine());
-			System.out.printf("What is the login email address?\n");
-			this.setLogin(input.readLine());
-			System.out.printf("Would you like to save a password for authentication?\n(Otherwise you will be prompted everytime the bot starts)\n");
-			String in = input.readLine();
-			if (in.startsWith("y") || in.startsWith("Y")){
-				System.out.printf("Please enter a password");
-				loginPass = input.readLine();
-			}
-			this.setVersion(Main.version);
-			//compileConfigFile();
-		}
-		catch(IOException e){}
+		
 	}
 
 

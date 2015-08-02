@@ -1,5 +1,6 @@
 package com.wc1.felisBotus;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,8 @@ public class Main {
 	public static final String configFile = "./config.xml";
 
 	public static void main(String[] args) {
-
+		//BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		Console console = System.console();
 		boolean reset = false;
 		for(int i = 0; i < args.length;i++){
 			if (args[i].equals("-reset")) reset = true;
@@ -32,6 +34,16 @@ public class Main {
 		}
 		File config = new File(configFile);
 		if(reset || !config.exists()){
+			if (!config.exists()) System.out.printf("No config file found in expected place\n");
+			console.printf("Initilizing for first time use\n\n");
+			String owner = console.readLine("What is your IRC Name? (Not the bot's)\n");
+			String botName = console.readLine("What would you like this bot to be called?\n");
+			String Login = console.readLine("What is the login email address for the bot?\n");
+			String response = console.readLine("Would you like to save a password for authentication?\n(Not Advised; this will be stored in plaintext)\n");
+			if (response.startsWith("y") || response.startsWith("Y")){
+				char[] loginPass = console.readPassword("Please enter a password");
+			}
+			
 			bots = new ArrayList<FelisBotus>();
 			bots.add(new FelisBotus());//initilize new bot
 		}
