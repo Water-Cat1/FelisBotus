@@ -52,7 +52,8 @@ public class FelisBotus extends PircBot {
 	public void connectInitial(){
 		this.setAutoNickChange(true);
 		if (server == null){
-			//ask user for an initial server
+			String newServer = System.console().readLine("Please enter a server address.\n");
+			server = new IRCServer(newServer);
 		}
 		try {
 			this.connect(server.getServerAddress());//TODO add support for saving port numbers and server passwords
@@ -60,7 +61,6 @@ public class FelisBotus extends PircBot {
 				Thread.sleep(1000);
 			}
 			//verify login
-
 			char[] pass;
 			if (loginPass != null){
 				pass = loginPass;
@@ -74,13 +74,15 @@ public class FelisBotus extends PircBot {
 			}
 			identify(pass.toString());
 			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
-				this.joinChannel(System.console().readLine("Please enter a channel name to connect to.\n"));
+				String newChannel = System.console().readLine("Please enter a channel name to connect to.\n");
+				server.addChannel(new IRCChannel(newChannel));
+				this.joinChannel(newChannel);
 			}else{//Connect to all default channels
 				for (IRCChannel channel:server.getChannels()){
 					this.joinChannel(channel.getName()); //TODO support for channels with keys
 				}
 			}
-		} catch (IOException e){//TODO how to manage excptions? return to console/
+		} catch (IOException e){//TODO how to manage exceptions? return to console/
 			//
 		} catch (IrcException e) {
 			// TODO Auto-generated catch block

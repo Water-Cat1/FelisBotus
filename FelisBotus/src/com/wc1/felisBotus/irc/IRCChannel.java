@@ -1,5 +1,6 @@
 package com.wc1.felisBotus.irc;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class IRCChannel {
@@ -13,7 +14,12 @@ public class IRCChannel {
 		this.ops = ops;
 		this.name = name;
 	}
-
+	
+	public IRCChannel(String name) {
+		super();
+		this.ops = new HashSet<String>();
+		this.name = name;
+	}
 
 	public String getName() {
 		return name;

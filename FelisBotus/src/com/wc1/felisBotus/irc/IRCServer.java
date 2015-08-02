@@ -16,6 +16,12 @@ public class IRCServer {
 		this.serverAddress = serverAddress;
 		this.channels = channels;
 	}
+	
+	public IRCServer(String serverAddress) {
+		super();
+		this.serverAddress = serverAddress;
+		this.channels = new HashSet<IRCChannel>();
+	}
 
 
 	public Set<IRCChannel> getChannels() {
