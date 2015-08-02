@@ -25,10 +25,10 @@ public class FelisBotus extends PircBot {
 	private String owner;
 	private IRCServer server; // this thing will contain all info on the server,
 	// channels and ops in said channels.
-	private char[] loginPass;
+	private String loginPass;
 
 	public FelisBotus(String botName, String owner, String login,
-			char[] loginPass) {
+			String loginPass) {
 		this.setName(botName);
 		this.owner = owner;
 		this.setLogin(login);
@@ -41,7 +41,7 @@ public class FelisBotus extends PircBot {
 		this.setName(botName);
 		this.owner = owner;
 		this.setLogin(login);
-		this.loginPass = loginPass.toCharArray();
+		this.loginPass = loginPass;
 		this.server = currServer;
 		this.setVersion(Main.version);
 	}
@@ -61,18 +61,20 @@ public class FelisBotus extends PircBot {
 				Thread.sleep(1000);
 			}
 			//verify login
-			char[] pass;
+			String pass;
 			if (loginPass != null){
 				pass = loginPass;
 			}
 			else{
-				pass = System.console().readPassword("Please enter a password to verify the bot on %s\n", this.server.getServerAddress());
+				pass = new String(System.console().readPassword("Please enter a password to verify the bot on %s\n", this.server.getServerAddress()));
 			}
 			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
 				sendMessage("NickServ", "GHOST " + pass.toString());
 				changeNick(this.getName());
 			}
-			identify(pass.toString());
+			System.out.println(pass);
+			//identify(pass);
+			Thread.sleep(1000);
 			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
 				String newChannel = System.console().readLine("Please enter a channel name to connect to.\n");
 				server.addChannel(new IRCChannel(newChannel));
@@ -198,8 +200,7 @@ public class FelisBotus extends PircBot {
 
 	public void onPrivateMessage(String sender, String login, String hostname,
 			String message) {
-		sendMessage(sender,
-				"I am not available for private discussions at this time.");
+		
 	}
 
 	public void onUserList(String channel, User[] users) {// TODO op people who

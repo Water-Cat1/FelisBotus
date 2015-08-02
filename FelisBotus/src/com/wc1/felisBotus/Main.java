@@ -38,9 +38,9 @@ public class Main {
 			String botName = console.readLine("What would you like this bot to be called?\n");
 			String login = console.readLine("What is the login email address for the bot?\n");
 			String response = console.readLine("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
-			char[] loginPass = null;
+			String loginPass = null;
 			if (response.startsWith("y") || response.startsWith("Y")){//could probably be smart about this but eh, only expect y/n or yes/no
-				loginPass = console.readPassword("Please enter a password");
+				loginPass = console.readPassword("Please enter a password").toString();
 			}
 			bots = new ArrayList<FelisBotus>();
 			bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
