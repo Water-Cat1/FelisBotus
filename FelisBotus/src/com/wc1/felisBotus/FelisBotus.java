@@ -12,7 +12,6 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 
 import org.jibble.pircbot.IrcException;
-import org.jibble.pircbot.NickAlreadyInUseException;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
@@ -47,55 +46,57 @@ public class FelisBotus extends PircBot {
 		this.setVersion(Main.version);
 	}
 
-	public void connectAuto(){
+	/**
+	 * Call to connect bots to default server assigned to them. Assumes call is from console and will ask console for missing information.
+	 */
+	public void connectInitial(){
 		this.setAutoNickChange(true);
 		if (server == null){
 			//ask user for an initial server
 		}
-		else{
-
-			try {
-				this.connect(server.getServerAddress());//TODO add support for saving port numbers and server passwords
-				while (!isConnected()){//wait till successfully connected
-					Thread.sleep(1000);
-				}
-				//verify login
-				if(this.getName().equals(this.getNick())){//check that bot managed to connect without needing o change name.
-					char[] pass;
-					if (loginPass != null){
-						pass = loginPass;
-					}
-					else{
-						pass = System.console().readPassword("Please enter a password to verify the bot on %s", this.server.getServerAddress());
-					}
-					identify(pass.toString());
-					
-				}
-				else {
-
-				}
-				if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
-
-				}else{//Connect to all default channels
-					for (IRCChannel channel:server.getChannels()){
-						this.joinChannel(channel.getName()); //TODO support for channels with keys
-					}
-				}
-			} catch (IOException e){//TODO how to manage excptions? return to console/other bot?
-				//
-			} catch (NickAlreadyInUseException e){
-				//TODO try a new nick? GHOSt then take back old nick?
-			} catch (IrcException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			this.connect(server.getServerAddress());//TODO add support for saving port numbers and server passwords
+			while (!isConnected()){//wait till successfully connected
+				Thread.sleep(1000);
 			}
+			//verify login
 
+			char[] pass;
+			if (loginPass != null){
+				pass = loginPass;
+			}
+			else{
+				pass = System.console().readPassword("Please enter a password to verify the bot on %s\n", this.server.getServerAddress());
+			}
+			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
+				sendMessage("NickServ", "GHOST " + pass.toString());
+				changeNick(this.getName());
+			}
+			identify(pass.toString());
+			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
+				this.joinChannel(System.console().readLine("Please enter a channel name to connect to.\n"));
+			}else{//Connect to all default channels
+				for (IRCChannel channel:server.getChannels()){
+					this.joinChannel(channel.getName()); //TODO support for channels with keys
+				}
+			}
+		} catch (IOException e){//TODO how to manage excptions? return to console/
+			//
+		} catch (IrcException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+
 	}
 
+	/**
+	 * Method to make bot connect to supplied server. 
+	 * @param newServer New server to connect to
+	 */
 	public void connectNew(IRCServer newServer){
 
 	}

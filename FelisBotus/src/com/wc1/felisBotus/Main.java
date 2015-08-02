@@ -68,7 +68,7 @@ public class Main {
 		}
 
 		for (FelisBotus bot:bots){
-			bot.connectAuto();
+			bot.connectInitial();
 		}
 		//TODO from here listen to console for specific commands
 	}
