@@ -22,8 +22,23 @@ import com.wc1.felisBotus.Main;
 import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.irc.IRCServer;
 
+/**
+ * Class for managing the input and output of XML files for the bot.
+ * Just two methods, one for compiling and generating the file, the other for reading the file.
+ * @author Reece
+ *
+ */
 public class XMLManager {
 
+	
+	
+	/**
+	 * compiles an XML file based on the supplied list of bots and map of commands
+	 * @param bots List of bots to save
+	 * @param commands Map of commands to save
+	 * @return Returns true if save successful
+	 * @throws IOException If error is encountered attempting to save the file
+	 */
 	public static boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands) throws IOException {
 		Document doc = new Document();
 		//root setup
@@ -75,6 +90,12 @@ public class XMLManager {
 		return true;
 	}
 
+	/**
+	 * Returns a savedata object from the config file found at Main.config
+	 * @return SaveData generated from config file
+	 * @throws JDOMException If error encounted parsing XML file
+	 * @throws IOException If error encounted reading the file
+	 */
 	public static SaveData loadConfigFile() throws JDOMException, IOException {
 		List<FelisBotus> bots = new ArrayList<FelisBotus>(); //new list  of bots
 

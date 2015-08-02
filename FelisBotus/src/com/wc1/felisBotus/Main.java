@@ -13,17 +13,29 @@ import org.jdom2.JDOMException;
 import com.wc1.felisBotus.xml.SaveData;
 import com.wc1.felisBotus.xml.XMLManager;
 
+/**
+ * Main class for running bots. Handles the list of bots as a single bot can only connect to one server. 
+ * Also holds a map of commands to responses for use by all the bots.
+ * Contains methods for handling the saving of all bots.
+ * @author Reece
+ *
+ */
 public class Main {
 
 	private static List<FelisBotus> bots;
 	private static Map<String, String> commands;
 	private static boolean noSave = false;
-	
-	public static final String version = "C3 Java IRC Bot - V0.2.W";
 	public static final String configFile = "./config.xml";
+	
+	
 
+	/**
+	 * Main Method for FelisBotus.
+	 * Checks entered arguments, then checks for a config file. If one is found it reads it and initilizes needed bot instances.
+	 * If not it gets required information from console to connect to an initial server and channel.
+	 * @param args '-reset' to not use any saved configs and start new. '-nosave' to not save any changes of the bots.
+	 */
 	public static void main(String[] args) {
-		//BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 		Console console = System.console();
 		boolean reset = false;
 		for(int i = 0; i < args.length;i++){
@@ -70,11 +82,16 @@ public class Main {
 		}
 
 		for (FelisBotus bot:bots){
-			bot.connectInitial();
+			bot.connectConsole();
 		}
 		//TODO from here listen to console for specific commands
 	}
 
+	/**
+	 * Method to save all information about the current running bot. As each instance can only connect to one server it is managed from here.
+	 * @return Returns true if save successful and false otherwise.
+	 * @throws IOException
+	 */
 	public static boolean save() throws IOException{
 		if (noSave) return false;
 		XMLManager.compileConfigFile(bots, commands);
@@ -83,10 +100,21 @@ public class Main {
 
 	//TODO Method to reload all bots?
 
-	public static String getCommand(String command){
+	/**
+	 * Method to get the response for the entered command.
+	 * @param command Command to find a response for
+	 * @return Response to command or null if command does not exist in Map
+	 */
+	public static String getResponse(String command){
 		return commands.get(command);
 	}
 
+	/**
+	 * Stores a command and it's response into the map
+	 * @param command Command to be used by others
+	 * @param response Response that bot sends out to others
+	 * @return old response if command already exists, null otherwise.
+	 */
 	public static String putCommand(String command, String response){
 		return commands.put(command, response);
 	}

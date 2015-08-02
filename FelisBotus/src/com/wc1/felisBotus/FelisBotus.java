@@ -18,6 +18,13 @@ import org.jibble.pircbot.User;
 import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.irc.IRCServer;
 
+/**
+ * Bot for the program. Each instance can only connect to one server, so several instances will need to be created to connect to several servers.
+ * Stores the username for the owner of this bot, server this bot will connect to, password to identify this bot (if it is being saved), login address and bot name.
+ * Bot will always listen to its owner or Ops in the channel. (yet to be implemented)
+ * @author Reece
+ *
+ */
 public class FelisBotus extends PircBot {
 
 	private boolean voiceUsers = true;
@@ -26,16 +33,33 @@ public class FelisBotus extends PircBot {
 	private IRCServer server; // this thing will contain all info on the server,
 	// channels and ops in said channels.
 	private String loginPass;
+	
+	public static final String version = "C3 Java IRC Bot - V0.2.W";
 
+	/**
+	 * Constructor for when bot without server information (can be added later through other methods) Used mainly for first time creation
+	 * @param botName Name for this bot
+	 * @param owner Username for the owner of this bot. Bot will always recognize commands from this user
+	 * @param login Login address for the bot
+	 * @param loginPass Password to identify this bot (can be null)
+	 */
 	public FelisBotus(String botName, String owner, String login,
 			String loginPass) {
 		this.setName(botName);
 		this.owner = owner;
 		this.setLogin(login);
 		this.loginPass = loginPass;
-		this.setVersion(Main.version);
+		this.setVersion(version);
 	}
 
+	/**
+	 * Constructer to create this bot, including server information. Used mainly for loading from the XML file.
+	 * @param botName Name for this bot
+	 * @param owner Username for the owner of this bot. Bot will always recognize commands from this user
+	 * @param login Login address for the bot
+	 * @param loginPass Password to identify this bot (can be null)
+	 * @param currServer Server information for this bot
+	 */
 	public FelisBotus(String botName, String owner, String login,
 			String loginPass, IRCServer currServer) {
 		this.setName(botName);
@@ -43,13 +67,13 @@ public class FelisBotus extends PircBot {
 		this.setLogin(login);
 		this.loginPass = loginPass;
 		this.server = currServer;
-		this.setVersion(Main.version);
+		this.setVersion(version);
 	}
 
 	/**
 	 * Call to connect bots to default server assigned to them. Assumes call is from console and will ask console for missing information.
 	 */
-	public void connectInitial(){
+	public void connectConsole(){
 		this.setAutoNickChange(true);
 		if (server == null){
 			String newServer = System.console().readLine("Please enter a server address.\n");
@@ -107,8 +131,9 @@ public class FelisBotus extends PircBot {
 	 * Method to make bot connect to supplied server. 
 	 * @param newServer New server to connect to
 	 */
-	public void connectNew(IRCServer newServer){
-
+	public void connectCommand(IRCServer newServer){
+		//TODO make this and make exception to be thrown if already connected to a server.
+		//do i make this recieve a server or use the one saved by the bot? It does need a server otherwise it won't be controllable.
 	}
 
 
@@ -117,14 +142,26 @@ public class FelisBotus extends PircBot {
 	}
 
 
+	/**
+	 * Returns the server associated with this instance of the bot
+	 * @return server for this bot
+	 */
 	public IRCServer getIRCServer() {
 		return server;
 	}
 
+	/**
+	 * Get the login password stored by this bot 
+	 * @return
+	 */
 	public String getLoginPass() {
 		return loginPass;
 	}
 
+	/**
+	 * Get the username for the owner of this pot
+	 * @return
+	 */
 	public String getOwner() {
 		return owner;
 	}
