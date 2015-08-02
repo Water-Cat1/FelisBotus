@@ -12,9 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
@@ -25,7 +22,7 @@ public class FelisBotus extends PircBot {
 	/*
 	 * Options
 	 */
-	public boolean voiceUsers = true;
+	private boolean voiceUsers = true;
 
 	private String owner;
 	private IRCServer server; //this thing will contain all info on the server, channels and ops in said channels.
@@ -59,14 +56,21 @@ public class FelisBotus extends PircBot {
 
 
 	public FelisBotus(File config) {
-		try {
-			Element rootElem = (new SAXBuilder().build(config)).getRootElement();//TODO move to XML manager as this is no longer handled by the bot
-
-		} catch (JDOMException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			//TODO move to XML manager as this is no longer handled by the bot
+//
+//		} catch (JDOMException | IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
+
+	public FelisBotus(String currBotName, String currBotOwner,
+			String currServerLogin, String currLoginPass, IRCServer currServer) {
+		// TODO Auto-generated constructor stub
+	}
+
+
 
 	@Override
 	public void onMessage(String channel, String sender, String login, String hostname, String message) {
@@ -90,7 +94,7 @@ public class FelisBotus extends PircBot {
 
 		sendMessage(channel,  "Hello " + sender + " Welcome to the Qubed C3 IRC Channel- (I am a Bot)");
 
-		if (voiceUsers){
+		if (isVoiceUsers()){
 			this.voice(channel, sender);
 		}
 
@@ -180,6 +184,18 @@ public class FelisBotus extends PircBot {
 	
 	public IRCServer getIRCServer() {
 		return server;
+	}
+
+
+
+	public boolean isVoiceUsers() {
+		return voiceUsers;
+	}
+
+
+
+	public void setVoiceUsers(boolean voiceUsers) {
+		this.voiceUsers = voiceUsers;
 	}
 
 

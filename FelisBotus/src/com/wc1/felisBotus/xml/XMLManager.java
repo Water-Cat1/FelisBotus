@@ -3,11 +3,17 @@ package com.wc1.felisBotus.xml;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
@@ -25,20 +31,18 @@ public class XMLManager {
 		Element elemBotList = new Element("BotList");//<BotList>
 		for (FelisBotus currBot:bots){
 			//save bot name
-			Element elemCurrBot = new Element(currBot.getName());//<Bot Owner="" Login="" [Pass=""]>
-			//save bot owner
+			Element elemCurrBot = new Element(currBot.getName());//<Bot Owner="" Login="" [LoginPass=""]>
 			elemCurrBot.setAttribute("Owner", currBot.getOwner());
-			//save bot login
 			elemCurrBot.setAttribute("Login", currBot.getLogin());
-			//save password if it is to be saved
 			String loginPass = currBot.getLoginPass();
 			if (loginPass != null){
-				elemCurrBot.setAttribute("Pass", loginPass);
+				elemCurrBot.setAttribute("LoginPass", loginPass);
 			}
 			//save single server associated with this bot
 			IRCServer currServer = currBot.getIRCServer(); 
-			Element elemCurrServer = new Element(currServer.getServerName());//<Server address="">
-			elemCurrServer.setAttribute("address", currServer.getServerAddress());
+			Element elemCurrServer = new Element("Server");//<Server Name="" Address="">
+			elemCurrServer.setAttribute("Name", currServer.getServerName());
+			elemCurrServer.setAttribute("Address", currServer.getServerAddress());
 			//add support here for servers with passwords if I need it
 			//add channels associated with this server
 			Element currServerChannels = new Element("Channels");//<Channels>
@@ -55,7 +59,7 @@ public class XMLManager {
 			elemCurrServer.addContent(currServerChannels);//</Channels>
 			elemCurrBot.addContent(elemCurrServer);//</Server>
 			elemBotList.addContent(elemCurrBot);//</Bot>
-			
+
 		}
 		elemRoot.addContent(elemBotList);//</BotList>
 		Element elemCommands = new Element("Commands");//<Commands>
@@ -66,14 +70,50 @@ public class XMLManager {
 		}
 		elemRoot.addContent(elemCommands);//</Commands>
 		doc.setRootElement(elemRoot); //</FelisBotusConfig>
-		
+
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
 		xmlOut.output(doc, new FileWriter(new File(Main.configFile)));
 		return true;
 	}
 
-	public static SaveData loadXML() {
-		// TODO Auto-generated method stub
-		return null;
+	public static SaveData loadConfigFile() throws JDOMException, IOException {
+		List<FelisBotus> bots = new ArrayList<FelisBotus>(); //new list  of bots
+
+		Element elemRoot = (new SAXBuilder().build(new File(Main.configFile))).getRootElement();
+		//TODO verify that file is of correct structure
+		Element elemBotList = elemRoot.getChild("BotList");
+		for (Element elemCurrBot:elemBotList.getChildren()){
+			String currBotName = elemCurrBot.getName();
+			String currBotOwner = elemCurrBot.getAttributeValue("Owner");
+			String currServerLogin = elemCurrBot.getAttributeValue("Login");
+			String currLoginPass = elemCurrBot.getAttributeValue("LoginPass"); //will return null if no password is saved
+			Element elemCurrServer = elemCurrBot.getChild("Server");
+			String currServerName = elemCurrServer.getAttributeValue("Name");
+			String currServerAddress = elemCurrServer.getAttributeValue("Address");
+			Element elemChannels = elemCurrServer.getChild("Channels");
+			Set<IRCChannel> channels = new HashSet<IRCChannel>();
+			for (Element elemCurrChannel:elemChannels.getChildren()){
+				String currChannelName = elemCurrChannel.getName();
+				Element elemOps = elemCurrChannel.getChild("Ops");
+				Set<String> ops = new HashSet<String>();
+				for (Element elemCurrOp:elemOps.getChildren()){
+					ops.add(elemCurrOp.getName());
+				}
+				IRCChannel currChannel = new IRCChannel(currChannelName, ops);
+				channels.add(currChannel);
+			}
+			IRCServer currServer = new IRCServer(currServerName, currServerAddress, channels);
+			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currServerLogin, currLoginPass, currServer);
+			bots.add(currBot);
+		}
+
+
+
+
+		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
+
+
+
+		return new SaveData(bots,commands);
 	}
 }

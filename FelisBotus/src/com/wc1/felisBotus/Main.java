@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jdom2.JDOMException;
+
 import com.wc1.felisBotus.xml.SaveData;
 import com.wc1.felisBotus.xml.XMLManager;
 
@@ -35,9 +37,17 @@ public class Main {
 		}
 		else {
 			//initilize bots with previous file
-			SaveData loadedData = XMLManager.loadXML();
+			SaveData loadedData;
+			try {
+				loadedData = XMLManager.loadConfigFile();
+			
 			bots = loadedData.getBots();
 			commands = loadedData.getCommands();
+			}
+			catch (JDOMException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		// Enable debugging output.
 		for (int i = 0; i < args.length; i++){
