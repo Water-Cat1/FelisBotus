@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class Main {
 			}
 			bots = new ArrayList<FelisBotus>();
 			bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
+			commands = new HashMap<String, String>();
 		}
 		else {
 			//initilize bots with previous file

@@ -72,11 +72,13 @@ public class FelisBotus extends PircBot {
 				sendMessage("NickServ", "GHOST " + pass.toString());
 				changeNick(this.getName());
 			}
-			System.out.println(pass);
-			//identify(pass);
+			identify(pass);
 			Thread.sleep(1000);
 			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
 				String newChannel = System.console().readLine("Please enter a channel name to connect to.\n");
+				while (!newChannel.startsWith("#")){
+					newChannel = System.console().readLine("Channel name requires a '#' symbol at the start.\n");
+				}
 				server.addChannel(new IRCChannel(newChannel));
 				this.joinChannel(newChannel);
 			}else{//Connect to all default channels
@@ -84,6 +86,9 @@ public class FelisBotus extends PircBot {
 					this.joinChannel(channel.getName()); //TODO support for channels with keys
 				}
 			}
+			Main.save();
+			Thread.sleep(5000);
+			sendMessage("#C3", "All setup and saved!");
 		} catch (IOException e){//TODO how to manage exceptions? return to console/
 			//
 		} catch (IrcException e) {
@@ -93,6 +98,7 @@ public class FelisBotus extends PircBot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+			
 
 
 	}
@@ -116,7 +122,7 @@ public class FelisBotus extends PircBot {
 	}
 
 	public String getLoginPass() {
-		return loginPass.toString();
+		return loginPass;
 	}
 
 	public String getOwner() {
