@@ -10,6 +10,9 @@
 package com.wc1.felisBotus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
@@ -33,7 +36,7 @@ public class FelisBotus extends PircBot {
 	private IRCServer server; // this thing will contain all info on the server,
 	// channels and ops in said channels.
 	private String loginPass;
-	
+
 	public static final String version = "C3 Java IRC Bot - V0.2.W";
 
 	/**
@@ -110,9 +113,6 @@ public class FelisBotus extends PircBot {
 					this.joinChannel(channel.getName()); //TODO support for channels with keys
 				}
 			}
-			Main.save();
-			Thread.sleep(5000);
-			sendMessage("#C3", "All setup and saved!");
 		} catch (IOException e){//TODO how to manage exceptions? return to console/
 			//
 		} catch (IrcException e) {
@@ -122,7 +122,7 @@ public class FelisBotus extends PircBot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+
 
 
 	}
@@ -227,7 +227,6 @@ public class FelisBotus extends PircBot {
 		if (message.equalsIgnoreCase("!time")) {
 			String time = new java.util.Date().toString();
 			sendMessage(channel, sender + ": The time is now " + time);
-
 		}
 		if (message.equalsIgnoreCase("!borg")) {
 			sendMessage(
@@ -243,18 +242,40 @@ public class FelisBotus extends PircBot {
 
 	public void onPrivateMessage(String sender, String login, String hostname,
 			String message) {
-		
+
 	}
 
-	public void onUserList(String channel, User[] users) {// TODO op people who
-		// are in this list
-		// and are on the op
-		// list
+	public void onUserList(String channel, User[] users) {
+		IRCChannel currChannel = server.getChannel(channel);
+		Set<String> opList = currChannel.getOpList();
+		List<String> addedToList = new ArrayList<String>();
 		for (int i = 0; i < users.length; i++) {
 			User user = users[i];
 			String nick = user.getNick();
-			System.out.println(nick);
+			if (opList.contains(nick)){
+				if(!user.isOp()){//user is on OP list but is not op'd, so op them
+					op(channel, nick);
+				}
+			}
+			else{
+				if(user.isOp()){//user is op'd but is not on bots op list, so add them to the list
+					currChannel.addOp(nick);
+					addedToList.add(nick);
+				}
+			}
 		}
+		StringBuilder output = new StringBuilder("Bot settings saved.");
+		if (addedToList.size() > 0){
+			output.append(" Added " + String.join(", ",(String[]) addedToList.toArray()) + "to saved list of Ops");
+		}
+
+		try {
+			if(Main.save())sendMessage(channel, output.toString());
+		} catch (IOException e) {
+			sendMessage(channel, "Error occured while saving bot config. :[");
+			e.printStackTrace();
+		}
+
 	}
 
 	public void setVoiceUsers(boolean voiceUsers) {

@@ -3,7 +3,6 @@ package com.wc1.felisBotus.irc;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +49,11 @@ public class IRCServer {
 		return Collections.unmodifiableCollection(channels.values());
 	}
 
+	/**
+	 * Get the IRCChannel object for the channel with channelNAme
+	 * @param channelName Name of channel to get object for
+	 * @return IRCChannel object
+	 */
 	public IRCChannel getChannel(String channelName){
 		return channels.get(channelName);
 	}
