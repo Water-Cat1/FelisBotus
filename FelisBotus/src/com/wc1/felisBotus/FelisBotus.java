@@ -99,7 +99,7 @@ public class FelisBotus extends PircBot {
 				pass = loginPass;
 			}
 			else{
-				pass = new String(System.console().readPassword("Please enter a password to verify the bot on %s\n", this.server.getServerAddress()));
+				pass = new String(System.console().readPassword("\nPlease enter a password to verify the bot on %s\n", this.server.getServerAddress()));
 			}
 			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
 				sendMessage("NickServ", "GHOST " + pass.toString());
@@ -281,20 +281,43 @@ public class FelisBotus extends PircBot {
 						}
 					}
 					else{
+						if (server.getChannels().contains(splitMessage[1])){
 						partChannel(splitMessage[1], "I must go, my people need me");
 						server.removeChannel(splitMessage[1]);
+						}
+						else{
+							sendNotice(sender, "I am not connected to this channel");
+						}
 					}
-
-
-
 				}
 				else{
 					sendNotice(sender, "You must be an OP to use this command");
 				}
 			break;
 			case("leaveserver"):
-
-				break;
+				if (isOp){
+					splitMessage = message.split(" ");
+					if (splitMessage.length > 2){
+						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"leaveserver [server]. "
+								+ "If no server is supplied then bot will leave this server");
+					}
+					else if (splitMessage.length == 1 || splitMessage[1].equals(server.getServerAddress())){
+						Main.removeBot(this);
+					}
+					else{
+						FelisBotus botToDisconnect = Main.getBotConnectedTo(splitMessage[1]);
+						if (botToDisconnect == null){
+							sendNotice(sender, "I am not connected to that server");
+						}
+						else{
+							Main.removeBot(botToDisconnect);
+							sendNotice(sender, "Successfully disconnected from " + splitMessage[1]);
+						} 
+					}
+				}else{
+					sendNotice(sender, "You must be an OP to use this command");
+				}
+			break;
 			case("joinchannel"):
 
 				break;
@@ -309,19 +332,6 @@ public class FelisBotus extends PircBot {
 				}
 
 			}
-			//if (message.equalsIgnoreCase("!time")) {
-			//	String time = new java.util.Date().toString();
-			//	sendMessage(channel, sender + ": The time is now " + time);
-			//		}
-			//		if (message.equalsIgnoreCase("!borg")) {
-			//			sendMessage(
-			//					channel,
-			//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
-			//		}
-			//		if (message.equalsIgnoreCase("!botleave")) {
-			//			sendMessage(channel, "I am un-wanted and will now leave.");
-			//			quitServer();
-			//		}
 		}
 
 	}

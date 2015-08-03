@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.jdom2.JDOMException;
 
-import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.xml.SaveData;
 import com.wc1.felisBotus.xml.XMLManager;
 
@@ -41,7 +40,6 @@ public class Main {
 	 * @param args '-reset' to not use any saved configs and start new. '-nosave' to not save any changes of the bots.
 	 */
 	public static void main(String[] args) {
-		Console console = System.console();
 		boolean reset = false;
 		for(int i = 0; i < args.length;i++){
 			if (args[i].equals("-reset")) reset = true;
@@ -50,18 +48,7 @@ public class Main {
 		File config = new File(configFile);
 		if(reset || !config.exists()){
 			if (!config.exists()) System.out.printf("No config file found in expected place\n");
-			console.printf("Initilizing for first time use\n\n");
-			//bot info
-			String owner = console.readLine("What is your IRC Name? (Not the bot's)\n");
-			String botName = console.readLine("What would you like this bot to be called?\n");
-			String login = console.readLine("What is the login email address for the bot?\n");
-			String response = console.readLine("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
-			String loginPass = null;
-			if (response.startsWith("y") || response.startsWith("Y")){//could probably be smart about this but eh, only expect y/n or yes/no
-				loginPass = console.readPassword("Please enter a password").toString();
-			}
-			bots = new ArrayList<FelisBotus>();
-			bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
+			initializeNewBot();
 			commands = new HashMap<String, String>();
 		}
 		else {
@@ -71,6 +58,10 @@ public class Main {
 				loadedData = XMLManager.loadConfigFile();
 
 				bots = loadedData.getBots();
+				if (bots.size() == 0 ){
+					System.out.printf("No saved servers found\n");
+					initializeNewBot();
+				}
 				commands = loadedData.getCommands();
 			}
 			catch (JDOMException | IOException e) {
@@ -90,6 +81,31 @@ public class Main {
 			bot.connectConsole();
 		}
 		//TODO from here listen to console for specific commands
+		while(bots.size()> 0){
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.exit(0);
+	}
+
+	private static void initializeNewBot() {
+		Console console = System.console();
+		console.printf("Initilizing for first time use\n\n");
+		//bot info
+		String owner = console.readLine("What is your IRC Name? (Not the bot's)\n");
+		String botName = console.readLine("What would you like this bot to be called?\n");
+		String login = console.readLine("What is the login email address for the bot?\n");
+		String response = console.readLine("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
+		String loginPass = null;
+		if (response.startsWith("y") || response.startsWith("Y")){//could probably be smart about this but eh, only expect y/n or yes/no
+			loginPass = console.readPassword("Please enter a password").toString();
+		}
+		bots = new ArrayList<FelisBotus>();
+		bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
 	}
 
 	/**
@@ -125,8 +141,20 @@ public class Main {
 	}
 
 	public static void removeBot(FelisBotus bot) {
-		bots.remove(bot);
 		bot.shutDown();
+		bots.remove(bot);
+		try {
+			save();
+		} catch (IOException e) {
+			System.console().printf("\nError saving config file\n");
+			e.printStackTrace();
+		}
+	}
+
+	public static FelisBotus getBotConnectedTo(String string) {
+		return null;
+		// TODO Auto-generated method stub
+		
 	}
 
 	//TODO create a new bot on command
