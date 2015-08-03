@@ -38,6 +38,8 @@ public class FelisBotus extends PircBot {
 	// channels and ops in said channels.
 	private String loginPass;
 
+	private boolean shuttingdown = false;
+
 	/**Version of the bot*/
 	public static final String version = "C3 Java IRC Bot - V0.5.W";
 	/**String that this bot will recognize as a command to it*/
@@ -177,14 +179,35 @@ public class FelisBotus extends PircBot {
 	}
 
 	public void onDisconnect() {
-		while (!isConnected()) {
-			try {
-				reconnect();
-			} catch (Exception e) {
-				// Couldn’t reconnect.
-				// Pause for a short while before retrying?
+		if (shuttingdown){
+			Main.removeBot(this);
+		}
+		else{
+			int retryCount = 0;
+			while (!isConnected()) {
+				try {
+					reconnect();
+					//ghost old bot?
+				} catch (Exception e) {
+					retryCount++;
+					if (retryCount > 5){
+						shuttingdown = true;
+						Main.removeBot(this);
+					}
+				}
 			}
 		}
+	}
+
+	public void shutDown(){
+		shuttingdown = true;
+		if(isConnected()){
+			for (IRCChannel channel:server.getChannels()){
+				partChannel(channel.getName(), "Shutting Down");
+			}
+			disconnect();
+		}
+		dispose();
 	}
 
 	@Override
@@ -214,34 +237,68 @@ public class FelisBotus extends PircBot {
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
 			boolean isOp = server.getChannel(channel).checkOP(sender);
-			String[] rawMessage = message.split(" ");
-			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ",3)[0];
-			switch(lowercaseCommand.substring(commandStart.length())){ //removes the command section of the string
+			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
+			String[] splitMessage = {""};
+			switch(lowercaseCommand.substring(commandStart.length())){ //substring removes the command section of the string
 			case("addcommand"):
-				if (isOp && rawMessage.length == 3){
-					String result = Main.putCommand(rawMessage[1].toLowerCase(Locale.ROOT), rawMessage[2]);
-					if (result !=null){
-						sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
+				splitMessage = message.split(" ",3);
+			if (isOp && splitMessage.length >= 3){
+				String result = Main.putCommand(splitMessage[1].toLowerCase(Locale.ROOT), splitMessage[2]);
+				if (result !=null){
+					sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
+				}
+				else{
+					sendNotice(sender, "Command successfully added :]");
+				}
+				try {
+					Main.save();
+				} catch (IOException e) {
+					sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
+					System.out.printf("\nFailed to save bot!\n");
+					e.printStackTrace();
+				}
+			}
+			else if (splitMessage.length < 3){
+				sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"addcommand <newCommand> <Response>");
+			}
+			else{
+				sendNotice(sender, "You must be an OP to use this command");
+			}
+			break;
+			case("leavechannel"):
+				if (isOp){
+					splitMessage = message.split(" ");
+					if ((!splitMessage[1].startsWith("#")) || splitMessage.length > 2){
+						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"leavechannel [channel]. "
+								+ "Channel must be prefxed by a #. If no channel is supplied then bot will leave this channel");
+					}
+					else if (splitMessage.length == 1 || splitMessage[1].equals(channel)){
+						partChannel(channel, "I don't hate you");
+						server.removeChannel(channel);
+						if (server.getChannels().size() == 0){ //not connected to any channels, disconnect from the server
+							shuttingdown = true;
+							disconnect();
+						}
 					}
 					else{
-						sendNotice(sender, "Command successfully added :]");
+						partChannel(splitMessage[1], "I must go, my people need me");
+						server.removeChannel(splitMessage[1]);
 					}
-					try {
-						Main.save();
-					} catch (IOException e) {
-						sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
-						System.out.printf("\nFailed to save bot!\n");
-						e.printStackTrace();
-					}
-				}
-				else if (rawMessage.length < 3){
-					sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"addcommand <newCommand> <Response>");
+
+
+
 				}
 				else{
 					sendNotice(sender, "You must be an OP to use this command");
 				}
-				break;
+			break;
+			case("leaveserver"):
 
+				break;
+			case("joinchannel"):
+
+				break;
+			case("joinserver"):
 			default:
 				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
 				if (response != null){
@@ -268,8 +325,8 @@ public class FelisBotus extends PircBot {
 		}
 
 	}
-	
-	
+
+
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -357,6 +414,43 @@ public class FelisBotus extends PircBot {
 
 	public void setVoiceUsers(boolean voiceUsers) {
 		this.voiceUsers = voiceUsers;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((server == null) ? 0 : server.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof FelisBotus))
+			return false;
+		FelisBotus other = (FelisBotus) obj;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		if (server == null) {
+			if (other.server != null)
+				return false;
+		} else if (!server.equals(other.server))
+			return false;
+		return true;
 	}
 
 }

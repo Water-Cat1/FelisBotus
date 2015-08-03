@@ -84,4 +84,43 @@ public class IRCServer {
 		return channels.remove(oldChannel);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((channels == null) ? 0 : channels.hashCode());
+		result = prime * result
+				+ ((serverAddress == null) ? 0 : serverAddress.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof IRCServer))
+			return false;
+		IRCServer other = (IRCServer) obj;
+		if (channels == null) {
+			if (other.channels != null)
+				return false;
+		} else if (!channels.equals(other.channels))
+			return false;
+		if (serverAddress == null) {
+			if (other.serverAddress != null)
+				return false;
+		} else if (!serverAddress.equals(other.serverAddress))
+			return false;
+		return true;
+	}
+
 }

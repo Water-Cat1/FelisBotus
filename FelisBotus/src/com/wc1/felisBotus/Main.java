@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.jdom2.JDOMException;
 
+import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.xml.SaveData;
 import com.wc1.felisBotus.xml.XMLManager;
 
@@ -121,6 +122,11 @@ public class Main {
 	 */
 	public static String putCommand(String command, String response){
 		return commands.put(command, response);
+	}
+
+	public static void removeBot(FelisBotus bot) {
+		bots.remove(bot);
+		bot.shutDown();
 	}
 
 	//TODO create a new bot on command
