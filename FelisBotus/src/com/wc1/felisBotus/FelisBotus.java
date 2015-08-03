@@ -117,6 +117,7 @@ public class FelisBotus extends PircBot {
 					this.joinChannel(channel.getName()); //TODO support for channels with keys
 				}
 			}
+			Main.save();
 		} catch (IOException e){//TODO how to manage exceptions? return to console/
 			//
 		} catch (IrcException e) {
@@ -239,7 +240,7 @@ public class FelisBotus extends PircBot {
 				else{
 					sendNotice(sender, "You must be an OP to use this command");
 				}
-			break;
+				break;
 
 			default:
 				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
@@ -267,10 +268,17 @@ public class FelisBotus extends PircBot {
 		}
 
 	}
+	
+	
 
-	public void onPrivateMessage(String sender, String login, String hostname,
-			String message) {
-
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onNotice(String sourceNick, String sourceLogin,
+			String sourceHostname, String target, String notice) {
+		// TODO Auto-generated method stub
+		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
 	}
 
 	@Override
