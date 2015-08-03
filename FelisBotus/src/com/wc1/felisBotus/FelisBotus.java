@@ -229,16 +229,16 @@ public class FelisBotus extends PircBot {
 		//if (message.equalsIgnoreCase("!time")) {
 		//	String time = new java.util.Date().toString();
 		//	sendMessage(channel, sender + ": The time is now " + time);
-//		}
-//		if (message.equalsIgnoreCase("!borg")) {
-//			sendMessage(
-//					channel,
-//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
-//		}
-//		if (message.equalsIgnoreCase("!botleave")) {
-//			sendMessage(channel, "I am un-wanted and will now leave.");
-//			quitServer();
-//		}
+		//		}
+		//		if (message.equalsIgnoreCase("!borg")) {
+		//			sendMessage(
+		//					channel,
+		//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
+		//		}
+		//		if (message.equalsIgnoreCase("!botleave")) {
+		//			sendMessage(channel, "I am un-wanted and will now leave.");
+		//			quitServer();
+		//		}
 
 	}
 
@@ -249,11 +249,11 @@ public class FelisBotus extends PircBot {
 
 	@Override
 	protected void onOp(String channel, String sourceNick, String sourceLogin,
-			String sourceHostname, String recipient) {
+		String sourceHostname, String recipient) {
+		IRCChannel currChannel = server.getChannel(channel);
+		Set<String> opList = currChannel.getOpList();
 		if (recipient.equals(this.getNick())){
 			server.getChannel(channel).setBotIsOp(true);
-			IRCChannel currChannel = server.getChannel(channel);
-			Set<String> opList = currChannel.getOpList();
 			List<String> addedToList = new ArrayList<String>();
 			User[] users = getUsers(channel);
 			for (int i = 0; i < users.length; i++) {
@@ -265,7 +265,7 @@ public class FelisBotus extends PircBot {
 					}
 				}
 				else{
-					if(user.isOp()){//user is op'd but is not on bots op list, so add them to the list
+					if(user.isOp() && nick != this.getNick()){//user is op'd but is not on bots op list, so add them to the list
 						currChannel.addOp(nick);
 						addedToList.add(nick);
 					}
@@ -282,18 +282,42 @@ public class FelisBotus extends PircBot {
 				e.printStackTrace();
 			}
 		}
+		else{
+			if(!opList.contains(recipient)){
+				currChannel.addOp(recipient);
+				try {
+					if(Main.save())sendMessage(channel, recipient + " has been added to the saved Op list");
+				} catch (IOException e) {
+					sendMessage(channel, "Error occured while saving bot config. :[");
+					e.printStackTrace();
+				}
+			}
+		}
 	}
-	
+
 	@Override
 	protected void onDeop(String channel, String sourceNick,
 			String sourceLogin, String sourceHostname, String recipient) {
 		if (recipient.equals(this.getNick())){
 			server.getChannel(channel).setBotIsOp(false);
 		}
+		else{
+			IRCChannel currChannel = server.getChannel(channel);
+			Set<String> opList = currChannel.getOpList();
+			if(opList.contains(recipient)){
+				currChannel.removeOp(recipient);
+				try {
+					if(Main.save())sendMessage(channel, recipient + " has been removed from the saved Op list");
+				} catch (IOException e) {
+					sendMessage(channel, "Error occured while saving bot config. :[");
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void onUserList(String channel, User[] users) {
-		
+
 
 	}
 
