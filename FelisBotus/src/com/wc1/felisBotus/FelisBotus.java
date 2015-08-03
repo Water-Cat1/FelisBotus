@@ -12,6 +12,7 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.jibble.pircbot.IrcException;
@@ -37,7 +38,10 @@ public class FelisBotus extends PircBot {
 	// channels and ops in said channels.
 	private String loginPass;
 
-	public static final String version = "C3 Java IRC Bot - V0.2.W";
+	/**Version of the bot*/
+	public static final String version = "C3 Java IRC Bot - V0.5.W";
+	/**String that this bot will recognize as a command to it*/
+	public static final String commandStart = "\\";
 
 	/**
 	 * Constructor for when bot without server information (can be added later through other methods) Used mainly for first time creation
@@ -85,7 +89,7 @@ public class FelisBotus extends PircBot {
 		try {
 			this.connect(server.getServerAddress());//TODO add support for saving port numbers and server passwords
 			while (!isConnected()){//wait till successfully connected
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			}
 			//verify login
 			String pass;
@@ -137,11 +141,6 @@ public class FelisBotus extends PircBot {
 	}
 
 
-	public void checkUserPermissions() {
-
-	}
-
-
 	/**
 	 * Returns the server associated with this instance of the bot
 	 * @return server for this bot
@@ -176,19 +175,6 @@ public class FelisBotus extends PircBot {
 		System.out.println(line + "\n");
 	}
 
-	public void messageSender(String message) {// TODO ask jenny whats going on
-		// with this?
-		String channels = "#c3";
-		sendMessage("#c3", message);
-		sendRawLine(message);
-
-		// Debug code
-		int queue = this.getOutgoingQueueSize();
-		System.out.println("From Bot Message sent = " + channels + " : "
-				+ message);
-		System.out.println(queue);
-	}
-
 	public void onDisconnect() {
 		while (!isConnected()) {
 			try {
@@ -214,31 +200,67 @@ public class FelisBotus extends PircBot {
 
 	}
 
-	public void onKick(String channel, String kickerNick, String login,
-			String hostname, String recipientNick, String reason) {
-		if (recipientNick.equalsIgnoreCase(getNick())) {
-			joinChannel(channel);
-		}
-	}
+	//	public void onKick(String channel, String kickerNick, String login,
+	//			String hostname, String recipientNick, String reason) {
+	//		if (recipientNick.equalsIgnoreCase(getNick())) {
+	//			joinChannel(channel);
+	//			sendMessage(channel, "Guess who is baaaaack!");
+	//		}
+	//	}
 
 	@Override
 	public void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
-		if (message.equalsIgnoreCase("\\checkUsers")){
+		if (message.startsWith(commandStart)){
+			String[] rawMessage = message.split(" ");
+			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ",3)[0];
+			switch(lowercaseCommand.substring(commandStart.length())){ //removes the command section of the string
+			case("addcommand"):
+				if (rawMessage.length == 3){
+					String result = Main.putCommand(rawMessage[1].toLowerCase(Locale.ROOT), rawMessage[2]);
+					if (result !=null){
+						sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
+					}
+					else{
+						sendNotice(sender, "Command successfully added :]");
+					}
+					try {
+						Main.save();
+					} catch (IOException e) {
+						sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
+						System.out.printf("\nFailed to save bot!\n");
+						e.printStackTrace();
+					}
+				}
+				else{
+					sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"addcommand <newCommand> <Response>");
+				}
+			break;
+
+			default:
+				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
+				if (response != null){
+					sendMessage(channel, response);
+				}
+				else{
+					sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
+				}
+
+			}
+			//if (message.equalsIgnoreCase("!time")) {
+			//	String time = new java.util.Date().toString();
+			//	sendMessage(channel, sender + ": The time is now " + time);
+			//		}
+			//		if (message.equalsIgnoreCase("!borg")) {
+			//			sendMessage(
+			//					channel,
+			//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
+			//		}
+			//		if (message.equalsIgnoreCase("!botleave")) {
+			//			sendMessage(channel, "I am un-wanted and will now leave.");
+			//			quitServer();
+			//		}
 		}
-		//if (message.equalsIgnoreCase("!time")) {
-		//	String time = new java.util.Date().toString();
-		//	sendMessage(channel, sender + ": The time is now " + time);
-		//		}
-		//		if (message.equalsIgnoreCase("!borg")) {
-		//			sendMessage(
-		//					channel,
-		//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
-		//		}
-		//		if (message.equalsIgnoreCase("!botleave")) {
-		//			sendMessage(channel, "I am un-wanted and will now leave.");
-		//			quitServer();
-		//		}
 
 	}
 
@@ -249,7 +271,7 @@ public class FelisBotus extends PircBot {
 
 	@Override
 	protected void onOp(String channel, String sourceNick, String sourceLogin,
-		String sourceHostname, String recipient) {
+			String sourceHostname, String recipient) {
 		IRCChannel currChannel = server.getChannel(channel);
 		Set<String> opList = currChannel.getOpList();
 		if (recipient.equals(this.getNick())){
@@ -271,7 +293,7 @@ public class FelisBotus extends PircBot {
 					}
 				}
 			}
-			StringBuilder output = new StringBuilder("Bot settings saved.");
+			StringBuilder output = new StringBuilder("Bot initialized.");
 			if (addedToList.size() > 0){
 				output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to saved list of Ops");
 			}
