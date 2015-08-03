@@ -25,6 +25,10 @@ public class Main {
 	private static List<FelisBotus> bots;
 	private static Map<String, String> commands;
 	private static boolean noSave = false;
+	
+	/**
+	 * Location of the config file
+	 */
 	public static final String configFile = "./config.xml";
 	
 	
