@@ -148,8 +148,12 @@ public class Main {
 	}
 
 	public static FelisBotus getBotConnectedTo(String string) {
+		for (FelisBotus currBot:bots){
+			if (currBot.getServer().equalsIgnoreCase(string)){
+				return currBot;
+			}
+		}
 		return null;
-		// TODO Auto-generated method stub
 		
 	}
 	
