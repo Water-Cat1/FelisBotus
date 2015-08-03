@@ -212,11 +212,12 @@ public class FelisBotus extends PircBot {
 	public void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
+			boolean isOp = server.getChannel(channel).checkOP(sender);
 			String[] rawMessage = message.split(" ");
 			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ",3)[0];
 			switch(lowercaseCommand.substring(commandStart.length())){ //removes the command section of the string
 			case("addcommand"):
-				if (server.getChannel(channel).checkOP(sender) && rawMessage.length == 3){
+				if (isOp && rawMessage.length == 3){
 					String result = Main.putCommand(rawMessage[1].toLowerCase(Locale.ROOT), rawMessage[2]);
 					if (result !=null){
 						sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
