@@ -216,7 +216,7 @@ public class FelisBotus extends PircBot {
 			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ",3)[0];
 			switch(lowercaseCommand.substring(commandStart.length())){ //removes the command section of the string
 			case("addcommand"):
-				if (rawMessage.length == 3){
+				if (server.getChannel(channel).checkOP(sender) && rawMessage.length == 3){
 					String result = Main.putCommand(rawMessage[1].toLowerCase(Locale.ROOT), rawMessage[2]);
 					if (result !=null){
 						sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
@@ -232,8 +232,11 @@ public class FelisBotus extends PircBot {
 						e.printStackTrace();
 					}
 				}
-				else{
+				else if (rawMessage.length < 3){
 					sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"addcommand <newCommand> <Response>");
+				}
+				else{
+					sendNotice(sender, "You must be an OP to use this command");
 				}
 			break;
 

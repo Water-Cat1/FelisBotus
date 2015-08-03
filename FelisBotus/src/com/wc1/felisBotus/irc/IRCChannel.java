@@ -70,6 +70,10 @@ public class IRCChannel {
 	public boolean removeOp(String name){
 		return ops.remove(name);
 	}
+	
+	public boolean checkOP(String name){
+		return ops.contains(name);
+	}
 
 	public void setBotIsOp(boolean opStatus){
 		botIsOP = opStatus;
