@@ -1,7 +1,10 @@
 package com.wc1.felisBotus.irc;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -11,7 +14,7 @@ import java.util.Set;
  */
 public class IRCServer {
 
-	private Set<IRCChannel> channels = new HashSet<IRCChannel>();
+	private Map<String, IRCChannel> channels = new HashMap<String, IRCChannel>();
 	private String serverAddress;
 
 
@@ -24,9 +27,11 @@ public class IRCServer {
 			Set<IRCChannel> channels) {
 		super();
 		this.serverAddress = serverAddress;
-		this.channels = channels;
+		for (IRCChannel currChannel:channels){
+			this.channels.put(currChannel.getName(), currChannel);
+		}
 	}
-	
+
 	/**
 	 * Create an instance using just a server address
 	 * @param serverAddress
@@ -34,15 +39,19 @@ public class IRCServer {
 	public IRCServer(String serverAddress) {
 		super();
 		this.serverAddress = serverAddress;
-		this.channels = new HashSet<IRCChannel>();
+		this.channels = new HashMap<String,IRCChannel>();
 	}
 
 	/**
 	 * Get the set of saved channels for this server
 	 * @return Set of saved channels
 	 */
-	public Set<IRCChannel> getChannels() {
-		return Collections.unmodifiableSet(channels);
+	public Collection<IRCChannel> getChannels() {
+		return Collections.unmodifiableCollection(channels.values());
+	}
+
+	public IRCChannel getChannel(String channelName){
+		return channels.get(channelName);
 	}
 
 	/**
@@ -56,48 +65,19 @@ public class IRCServer {
 	/**
 	 * Add a channel to the set of saved channels
 	 * @param newChannel Channel to save
-	 * @return True if successfully added, false otherwise
+	 * @return Old channel if one is already saved, null otherwise.
 	 */
-	public boolean addChannel(IRCChannel newChannel){
-		return channels.add(newChannel);
+	public IRCChannel addChannel(IRCChannel newChannel){
+		return channels.put(newChannel.getName(), newChannel);
 	}
 
 	/**
-	 * Remove a chanel from the saved set
+	 * Remove a channel from the saved set
 	 * @param oldChannel Channel to remove
-	 * @return True if successfully removed
+	 * @return IRCChannel that was removed
 	 */
-	public boolean removeChannel(String oldChannel){
+	public IRCChannel removeChannel(String oldChannel){
 		return channels.remove(oldChannel);
 	}
 
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((serverAddress == null) ? 0 : serverAddress.hashCode());
-		return result;
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof IRCServer))
-			return false;
-		IRCServer other = (IRCServer) obj;
-		if (serverAddress == null) {
-			if (other.serverAddress != null)
-				return false;
-		} else if (!serverAddress.equals(other.serverAddress))
-			return false;
-		return true;
-	}
-	
-	
 }
