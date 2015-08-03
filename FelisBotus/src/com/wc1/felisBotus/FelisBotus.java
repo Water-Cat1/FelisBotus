@@ -224,19 +224,21 @@ public class FelisBotus extends PircBot {
 	@Override
 	public void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
-		if (message.equalsIgnoreCase("!time")) {
-			String time = new java.util.Date().toString();
-			sendMessage(channel, sender + ": The time is now " + time);
+		if (message.equalsIgnoreCase("\\checkUsers")){
 		}
-		if (message.equalsIgnoreCase("!borg")) {
-			sendMessage(
-					channel,
-					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
-		}
-		if (message.equalsIgnoreCase("!botleave")) {
-			sendMessage(channel, "I am un-wanted and will now leave.");
-			quitServer();
-		}
+		//if (message.equalsIgnoreCase("!time")) {
+		//	String time = new java.util.Date().toString();
+		//	sendMessage(channel, sender + ": The time is now " + time);
+//		}
+//		if (message.equalsIgnoreCase("!borg")) {
+//			sendMessage(
+//					channel,
+//					"We are the Borg. Lower your shields and surrender your ships. We will add your biological and technological distinctiveness to our own. Your culture will adapt to service us. Resistance is futile.");
+//		}
+//		if (message.equalsIgnoreCase("!botleave")) {
+//			sendMessage(channel, "I am un-wanted and will now leave.");
+//			quitServer();
+//		}
 
 	}
 
@@ -245,36 +247,53 @@ public class FelisBotus extends PircBot {
 
 	}
 
-	public void onUserList(String channel, User[] users) {
-		IRCChannel currChannel = server.getChannel(channel);
-		Set<String> opList = currChannel.getOpList();
-		List<String> addedToList = new ArrayList<String>();
-		for (int i = 0; i < users.length; i++) {
-			User user = users[i];
-			String nick = user.getNick();
-			if (opList.contains(nick)){
-				if(!user.isOp()){//user is on OP list but is not op'd, so op them
-					op(channel, nick);
+	@Override
+	protected void onOp(String channel, String sourceNick, String sourceLogin,
+			String sourceHostname, String recipient) {
+		if (recipient.equals(this.getNick())){
+			server.getChannel(channel).setBotIsOp(true);
+			IRCChannel currChannel = server.getChannel(channel);
+			Set<String> opList = currChannel.getOpList();
+			List<String> addedToList = new ArrayList<String>();
+			User[] users = getUsers(channel);
+			for (int i = 0; i < users.length; i++) {
+				User user = users[i];
+				String nick = user.getNick();
+				if (opList.contains(nick)){
+					if(!user.isOp()){//user is on OP list but is not op'd, so op them
+						op(channel, nick);
+					}
+				}
+				else{
+					if(user.isOp()){//user is op'd but is not on bots op list, so add them to the list
+						currChannel.addOp(nick);
+						addedToList.add(nick);
+					}
 				}
 			}
-			else{
-				if(user.isOp()){//user is op'd but is not on bots op list, so add them to the list
-					currChannel.addOp(nick);
-					addedToList.add(nick);
-				}
+			StringBuilder output = new StringBuilder("Bot settings saved.");
+			if (addedToList.size() > 0){
+				output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to saved list of Ops");
+			}
+			try {
+				if(Main.save())sendMessage(channel, output.toString());
+			} catch (IOException e) {
+				sendMessage(channel, "Error occured while saving bot config. :[");
+				e.printStackTrace();
 			}
 		}
-		StringBuilder output = new StringBuilder("Bot settings saved.");
-		if (addedToList.size() > 0){
-			output.append(" Added " + String.join(", ",(String[]) addedToList.toArray()) + "to saved list of Ops");
+	}
+	
+	@Override
+	protected void onDeop(String channel, String sourceNick,
+			String sourceLogin, String sourceHostname, String recipient) {
+		if (recipient.equals(this.getNick())){
+			server.getChannel(channel).setBotIsOp(false);
 		}
+	}
 
-		try {
-			if(Main.save())sendMessage(channel, output.toString());
-		} catch (IOException e) {
-			sendMessage(channel, "Error occured while saving bot config. :[");
-			e.printStackTrace();
-		}
+	public void onUserList(String channel, User[] users) {
+		
 
 	}
 

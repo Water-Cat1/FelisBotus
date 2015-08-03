@@ -14,6 +14,7 @@ public class IRCChannel {
 
 	private String name;
 	private Set<String> ops;
+	private boolean botIsOP = false;
 
 	/**
 	 * Create an instance of IRCServer supplying the name and set of ops
@@ -70,6 +71,13 @@ public class IRCChannel {
 		return ops.remove(name);
 	}
 
+	public void setBotIsOp(boolean opStatus){
+		botIsOP = opStatus;
+	}
+	
+	public boolean getBotIsOp(){
+		return botIsOP;
+	}
 
 	@Override
 	public int hashCode() {
