@@ -265,6 +265,33 @@ public class FelisBotus extends PircBot {
 				sendNotice(sender, "You must be an OP to use this command");
 			}
 			break;
+			case("removecommand"):
+				if (isOp){
+					splitMessage = message.split(" ",3);
+					if (splitMessage.length == 2){
+						String result = Main.removeCommand(splitMessage[1]);
+						if (result==null){
+							sendNotice(sender, splitMessage[1] + " was never a saved command");
+						}
+						else{
+							sendNotice(sender, "Command successfully removed! :]");
+							try {
+								Main.save();
+							} catch (IOException e) {
+								sendNotice(sender, "Failed to save command. Command will come back on bot restart :[");
+								System.out.printf("\nFailed to save bot!\n");
+								e.printStackTrace();
+							}
+						}
+					}
+					else{
+						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"removecommand <oldCommand>");
+					}
+				}
+				else{
+					sendNotice(sender, "You must be an OP to use this command");
+				}
+			break;
 			case("leavechannel"):
 				if (isOp){
 					splitMessage = message.split(" ");
@@ -282,8 +309,8 @@ public class FelisBotus extends PircBot {
 					}
 					else{
 						if (server.getChannels().contains(splitMessage[1])){
-						partChannel(splitMessage[1], "I must go, my people need me");
-						server.removeChannel(splitMessage[1]);
+							partChannel(splitMessage[1], "I must go, my people need me");
+							server.removeChannel(splitMessage[1]);
 						}
 						else{
 							sendNotice(sender, "I am not connected to this channel");
@@ -322,6 +349,35 @@ public class FelisBotus extends PircBot {
 
 				break;
 			case("joinserver"):
+				break;
+			case("shutdown"):
+				if (isOp){
+					splitMessage = message.split(" ");
+					if (splitMessage.length == 2 && splitMessage[1].equalsIgnoreCase("force")){
+						try {
+							Main.shutItDown(true);
+						} catch (IOException e) {
+							//Will never throw exception here
+						}
+					}
+					else if (splitMessage.length == 1){
+						try {
+							Main.shutItDown(false);
+						} catch (IOException e) {
+							sendNotice(sender, "Error while attempting to save before shutdown :[ \n"
+									+ "If you wish to ignore this use " + commandStart + "shutdown force.");
+							System.out.printf("Error encounted while attempting to save while shuting down\n");
+							e.printStackTrace();
+						}
+					}
+					else{
+						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"shutdown [force]. "
+								+ "If the word 'force' is supplied then bot will shutdown even if an error occurs.");
+					}
+				}else{
+					sendNotice(sender, "You must be an OP to use this command");
+				}
+				break;
 			default:
 				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
 				if (response != null){

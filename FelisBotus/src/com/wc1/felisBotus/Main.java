@@ -81,15 +81,7 @@ public class Main {
 			bot.connectConsole();
 		}
 		//TODO from here listen to console for specific commands
-		while(bots.size()> 0){
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		System.exit(0);
+
 	}
 
 	private static void initializeNewBot() {
@@ -139,6 +131,10 @@ public class Main {
 	public static String putCommand(String command, String response){
 		return commands.put(command, response);
 	}
+	
+	public static String removeCommand(String command){
+		return commands.remove(command);
+	}
 
 	public static void removeBot(FelisBotus bot) {
 		bot.shutDown();
@@ -154,6 +150,19 @@ public class Main {
 	public static FelisBotus getBotConnectedTo(String string) {
 		return null;
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public static void shutItDown(boolean force) throws IOException{
+		try {
+			Main.save();
+		} catch (IOException e) {
+			if (!force)throw e;
+		}
+		for (FelisBotus bot:bots){
+			bot.shutDown();
+		}
+		System.exit(0);
 		
 	}
 
