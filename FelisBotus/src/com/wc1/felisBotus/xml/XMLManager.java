@@ -78,7 +78,8 @@ public class XMLManager {
 		elemRoot.addContent(elemBotList);//</BotList>
 		Element elemCommands = new Element("Commands");//<Commands>
 		for (String key:commands.keySet()){
-			Element elemCurrCommand = new Element(key);//<Command response=""/>
+			Element elemCurrCommand = new Element("Command");//<Command Command="" Response=""/>
+			elemCurrCommand.setAttribute("Command", key);
 			elemCurrCommand.setAttribute("Response", commands.get(key));
 			elemCommands.addContent(elemCurrCommand);
 		}
@@ -128,7 +129,7 @@ public class XMLManager {
 		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
 		Element elemCommands = elemRoot.getChild("Commands");
 		for (Element currCommand:elemCommands.getChildren()){
-			commands.put(currCommand.getName(), currCommand.getAttributeValue("Response"));
+			commands.put(currCommand.getAttributeValue("Command"), currCommand.getAttributeValue("Response"));
 		}
 		return new SaveData(bots,commands);
 	}
