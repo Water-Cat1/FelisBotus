@@ -61,7 +61,8 @@ public class XMLManager {
 			//add channels associated with this server
 			Element currServerChannels = new Element("Channels");//<Channels>
 			for (IRCChannel currChannel:currServer.getChannels()){
-				Element elemCurrChannel = new Element(currChannel.getName().substring(1)); //<Channel> //Do channels have certain things like passwords?
+				Element elemCurrChannel = new Element("Channel");
+				elemCurrChannel.setAttribute("Name",currChannel.getName().substring(1)); //<Channel> //Do channels have certain things like passwords?
 				//save ops for this channel
 				Element elemCurrChannelOps = new Element("Ops");//<Ops>
 				for (String currOp:currChannel.getOpList()){
@@ -113,7 +114,7 @@ public class XMLManager {
 			Element elemChannels = elemCurrServer.getChild("Channels");
 			Set<IRCChannel> channels = new HashSet<IRCChannel>();
 			for (Element elemCurrChannel:elemChannels.getChildren()){
-				String currChannelName = "#" + elemCurrChannel.getName();
+				String currChannelName = "#" + elemCurrChannel.getAttributeValue("Name");
 				Element elemOps = elemCurrChannel.getChild("Ops");
 				Set<String> ops = new HashSet<String>();
 				for (Element elemCurrOp:elemOps.getChildren()){
