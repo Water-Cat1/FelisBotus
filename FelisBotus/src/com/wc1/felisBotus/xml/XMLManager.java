@@ -114,7 +114,7 @@ public class XMLManager {
 		Element elemRoot = (new SAXBuilder().build(new File(Main.configFile))).getRootElement();
 		//TODO verify that file is of correct structure
 		Element elemBotList = elemRoot.getChild("BotList");
-		for (Element elemCurrBot:elemBotList.getChildren()){
+		for (Element elemCurrBot:elemBotList.getChildren("Bot")){
 			String currBotName = elemCurrBot.getAttributeValue("Name");
 			String currBotOwner = elemCurrBot.getAttributeValue("Owner");
 			String currLogin = elemCurrBot.getAttributeValue("Login");
@@ -123,7 +123,7 @@ public class XMLManager {
 			String currServerAddress = elemCurrServer.getAttributeValue("Address");
 			Element elemChannels = elemCurrServer.getChild("Channels");
 			Set<IRCChannel> channels = new HashSet<IRCChannel>();
-			for (Element elemCurrChannel:elemChannels.getChildren()){
+			for (Element elemCurrChannel:elemChannels.getChildren("Channel")){
 				String currChannelName = "#" + elemCurrChannel.getAttributeValue("Name");
 				Element elemOps = elemCurrChannel.getChild("Ops");
 				Set<String> ops = new HashSet<String>();
@@ -139,13 +139,13 @@ public class XMLManager {
 		}
 		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
 		Element elemCommands = elemRoot.getChild("Commands");
-		for (Element currCommand:elemCommands.getChildren()){
+		for (Element currCommand:elemCommands.getChildren("Command")){
 			commands.put(currCommand.getAttributeValue("Command"), currCommand.getAttributeValue("Response"));
 		}
 		Element elemStreamerList = elemRoot.getChild("Streamers"); 
 		List<String> streamersTwitch = new ArrayList<String>();
 		Element elemStreamersTwitch = elemStreamerList.getChild("Twitch");
-		for (Element currStreamer:elemStreamersTwitch.getChildren()){
+		for (Element currStreamer:elemStreamersTwitch.getChildren("Streamer")){
 			streamersTwitch.add(currStreamer.getAttributeValue("Name"));
 		}
 		return new SaveData(bots,commands, streamersTwitch);
