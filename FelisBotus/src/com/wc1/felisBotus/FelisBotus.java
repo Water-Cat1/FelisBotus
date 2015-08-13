@@ -104,6 +104,7 @@ public class FelisBotus extends PircBot {
 			}
 			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
 				sendMessage("NickServ", "GHOST " + this.getName() + " " + pass.toString());
+				Thread.sleep(1000);
 				changeNick(this.getName());
 			}
 			identify(pass);
