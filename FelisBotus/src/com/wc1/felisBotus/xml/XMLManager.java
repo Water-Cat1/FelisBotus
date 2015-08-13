@@ -46,7 +46,8 @@ public class XMLManager {
 		Element elemBotList = new Element("BotList");//<BotList>
 		for (FelisBotus currBot:bots){
 			//save bot name
-			Element elemCurrBot = new Element(currBot.getName());//<Bot Owner="" Login="" [LoginPass=""]>
+			Element elemCurrBot = new Element("Bot");//<Bot Name="" Owner="" Login="" [LoginPass=""]>
+			elemCurrBot.setAttribute("Name", currBot.getName());
 			elemCurrBot.setAttribute("Owner", currBot.getOwner());
 			elemCurrBot.setAttribute("Login", currBot.getLogin());
 			String loginPass = currBot.getLoginPass();
@@ -114,7 +115,7 @@ public class XMLManager {
 		//TODO verify that file is of correct structure
 		Element elemBotList = elemRoot.getChild("BotList");
 		for (Element elemCurrBot:elemBotList.getChildren()){
-			String currBotName = elemCurrBot.getName();
+			String currBotName = elemCurrBot.getAttributeValue("Name");
 			String currBotOwner = elemCurrBot.getAttributeValue("Owner");
 			String currLogin = elemCurrBot.getAttributeValue("Login");
 			String currLoginPass = elemCurrBot.getAttributeValue("LoginPass"); //will return null if no password is saved

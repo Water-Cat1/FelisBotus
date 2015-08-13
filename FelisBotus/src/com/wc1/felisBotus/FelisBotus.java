@@ -99,10 +99,11 @@ public class FelisBotus extends PircBot {
 				pass = loginPass;
 			}
 			else{
+				Thread.sleep(5000);
 				pass = new String(System.console().readPassword("\nPlease enter a password to verify the bot on %s\n", this.server.getServerAddress()));
 			}
 			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
-				sendMessage("NickServ", "GHOST " + pass.toString());
+				sendMessage("NickServ", "GHOST " + this.getName() + " " + pass.toString());
 				changeNick(this.getName());
 			}
 			identify(pass);
