@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Class to represent information about a single IRC channel. to be stored in the IRC Server object.
  * Contains channel name (including the '#' symbol) and the set of ops
- * @author Reece
+ * @author Water_Cat1
  *
  */
 public class IRCChannel {

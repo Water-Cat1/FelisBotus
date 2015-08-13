@@ -7,23 +7,25 @@ import com.wc1.felisBotus.FelisBotus;
 
 /**
  * Class for storing data returned from reading the XML config file
- * @author Reece
+ * @author Water_Cat1
  *
  */
 public class SaveData {
 
 	private List<FelisBotus> bots;
-	private Map<String, String> Commands;
+	private Map<String, String> commands;
+	private List<String> streamersTwitch;
 
 	/**
 	 * Create an instance of save data supplying the list of pots and map of commands
 	 * @param bots List of bots created
 	 * @param commands Map of commands
 	 */
-	public SaveData(List<FelisBotus> bots, Map<String, String> commands) {
+	public SaveData(List<FelisBotus> bots, Map<String, String> commands, List<String> streamersTwitch) {
 		super();
 		this.bots = bots;
-		Commands = commands;
+		this.commands = commands;
+		this.streamersTwitch = streamersTwitch;
 	}
 
 	/**
@@ -39,7 +41,11 @@ public class SaveData {
 	 * @return Map of commands
 	 */
 	public Map<String, String> getCommands() {
-		return Commands;
+		return commands;
+	}
+	
+	public List<String> getTwitchStreamers(){
+		return streamersTwitch;
 	}
 
 

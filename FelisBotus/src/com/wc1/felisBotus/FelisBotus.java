@@ -26,8 +26,8 @@ import com.wc1.felisBotus.irc.IRCServer;
  * Bot for the program. Each instance can only connect to one server, so several instances will need to be created to connect to several servers.
  * Stores the username for the owner of this bot, server this bot will connect to, password to identify this bot (if it is being saved), login address and bot name.
  * Bot will always listen to its owner or Ops in the channel. (yet to be implemented)
- * @author Reece
- *
+ * @author Water_Cat1
+ * @author JennyLeeP
  */
 public class FelisBotus extends PircBot {
 
@@ -211,12 +211,17 @@ public class FelisBotus extends PircBot {
 	}
 
 	@Override
-	public void onJoin(String channel, String sender, String login,
+	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
 
 		if (sender != this.getNick()) {
-			sendNotice(sender, "Hello " + sender
-					+ " Welcome to the Qubed C3 IRC Channel- (I am a Bot)");
+			if (sender.equals(owner)){
+				sendNotice(sender, "Greetings commander! The qube monkeys are ready for testing!");
+			}
+			else{
+				sendNotice(sender, "Hello " + sender
+						+ " Welcome to the Qubed C3 IRC Channel- (I am a Bot)");
+			}
 		}
 		if (isVoiceUsers()) {
 			this.voice(channel, sender);
@@ -233,7 +238,7 @@ public class FelisBotus extends PircBot {
 	//	}
 
 	@Override
-	public void onMessage(String channel, String sender, String login,
+	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
 			boolean isOp = server.getChannel(channel).checkOP(sender);
@@ -377,7 +382,7 @@ public class FelisBotus extends PircBot {
 				}else{
 					sendNotice(sender, "You must be an OP to use this command");
 				}
-				break;
+			break;
 			default:
 				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
 				if (response != null){

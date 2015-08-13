@@ -17,8 +17,8 @@ import com.wc1.felisBotus.xml.XMLManager;
  * Main class for running bots. Handles the list of bots as a single bot can only connect to one server. 
  * Also holds a map of commands to responses for use by all the bots.
  * Contains methods for handling the saving of all bots.
- * @author Reece
- *
+ * @author Water_Cat1
+ * @author JennyLeeP
  */
 public class Main {
 

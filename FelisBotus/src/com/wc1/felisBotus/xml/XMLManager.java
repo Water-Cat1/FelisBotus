@@ -25,7 +25,7 @@ import com.wc1.felisBotus.irc.IRCServer;
 /**
  * Class for managing the input and output of XML files for the bot.
  * Just two methods, one for compiling and generating the file, the other for reading the file.
- * @author Reece
+ * @author Water_Cat1
  *
  */
 public class XMLManager {
@@ -132,6 +132,6 @@ public class XMLManager {
 		for (Element currCommand:elemCommands.getChildren()){
 			commands.put(currCommand.getAttributeValue("Command"), currCommand.getAttributeValue("Response"));
 		}
-		return new SaveData(bots,commands);
+		return new SaveData(bots,commands, null);
 	}
 }

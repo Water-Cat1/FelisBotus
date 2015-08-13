@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * Class to contain information about an IRC server
- * @author Reece
+ * @author Water_Cat1
  *
  */
 public class IRCServer {
