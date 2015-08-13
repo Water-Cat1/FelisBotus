@@ -217,6 +217,10 @@ public class FelisBotus extends PircBot {
 			String hostname) {
 
 		if (sender != this.getNick()) {
+			IRCChannel currChannel = server.getChannel(channel);
+			if (currChannel.getBotIsOp() && currChannel.checkOP(sender)){
+				op(channel, sender);
+			}
 			if (sender.equals(owner)){
 				sendNotice(sender, "Greetings commander! The qube monkeys are ready for testing!");
 			}
@@ -413,7 +417,7 @@ public class FelisBotus extends PircBot {
 
 	@Override
 	protected void onOp(String channel, String sourceNick, String sourceLogin,
-			String sourceHostname, String recipient) {
+		String sourceHostname, String recipient) {
 		IRCChannel currChannel = server.getChannel(channel);
 		Set<String> opList = currChannel.getOpList();
 		if (recipient.equals(this.getNick())){
@@ -435,7 +439,7 @@ public class FelisBotus extends PircBot {
 					}
 				}
 			}
-			StringBuilder output = new StringBuilder("Bot initialized.");
+			StringBuilder output = new StringBuilder("OpBot initialized.");
 			if (addedToList.size() > 0){
 				output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to saved list of Ops");
 			}
@@ -481,8 +485,30 @@ public class FelisBotus extends PircBot {
 	}
 
 	public void onUserList(String channel, User[] users) {
-
-
+		IRCChannel currChannel = server.getChannel(channel);
+		Set<String> opList = currChannel.getOpList();
+		server.getChannel(channel).setBotIsOp(true);
+		List<String> addedToList = new ArrayList<String>();
+		for (int i = 0; i < users.length; i++) {
+			User user = users[i];
+			String nick = user.getNick();
+			if (!opList.contains(nick)){
+				if(user.isOp() && nick != this.getNick()){//user is op'd but is not on bots op list, so add them to the list
+					currChannel.addOp(nick);
+					addedToList.add(nick);
+				}
+			}
+		}
+		StringBuilder output = new StringBuilder("Bot initialized.");
+		if (addedToList.size() > 0){
+			output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to this bots known Ops");
+		}
+		try {
+			if(Main.save())sendMessage(channel, output.toString());
+		} catch (IOException e) {
+			sendMessage(channel, "Error occured while saving bot config. :[");
+			e.printStackTrace();
+		}
 	}
 
 	public void setVoiceUsers(boolean voiceUsers) {
