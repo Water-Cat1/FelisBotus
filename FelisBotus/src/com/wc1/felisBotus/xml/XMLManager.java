@@ -39,7 +39,7 @@ public class XMLManager {
 	 * @return Returns true if save successful
 	 * @throws IOException If error is encountered attempting to save the file
 	 */
-	public static boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands) throws IOException {
+	public static boolean compileConfigFile(List<FelisBotus> bots, Map<String, String> commands, List<String> streamersTwitch) throws IOException {
 		Document doc = new Document();
 		//root setup
 		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotusConfig>
@@ -85,6 +85,15 @@ public class XMLManager {
 			elemCommands.addContent(elemCurrCommand);
 		}
 		elemRoot.addContent(elemCommands);//</Commands>
+		Element elemStreamerList = new Element("Streamers");//<Streamers>
+		Element elemStreamersTwitch = new Element("Twitch");//<Twitch>
+		for (String currStreamer:streamersTwitch){
+			Element elemCurrStreamer = new Element("Streamer");//<Streamer Name="" />
+			elemCurrStreamer.setAttribute("Name", currStreamer);
+			elemStreamersTwitch.addContent(elemCurrStreamer);
+		}
+		elemStreamerList.addContent(elemStreamersTwitch);//</Twitch>
+		elemRoot.addContent(elemStreamerList);//</Streamers>
 		doc.setRootElement(elemRoot); //</FelisBotusConfig>
 
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
@@ -132,6 +141,12 @@ public class XMLManager {
 		for (Element currCommand:elemCommands.getChildren()){
 			commands.put(currCommand.getAttributeValue("Command"), currCommand.getAttributeValue("Response"));
 		}
-		return new SaveData(bots,commands, null);
+		Element elemStreamerList = elemRoot.getChild("Streamers"); 
+		List<String> streamersTwitch = new ArrayList<String>();
+		Element elemStreamersTwitch = elemStreamerList.getChild("Twitch");
+		for (Element currStreamer:elemStreamersTwitch.getChildren()){
+			streamersTwitch.add(currStreamer.getAttributeValue("Name"));
+		}
+		return new SaveData(bots,commands, streamersTwitch);
 	}
 }

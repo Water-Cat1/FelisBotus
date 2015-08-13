@@ -24,6 +24,7 @@ public class Main {
 
 	private static List<FelisBotus> bots;
 	private static Map<String, String> commands;
+	private static List<String> streamersTwitch;
 	private static boolean noSave = false;
 	
 	/**
@@ -63,6 +64,7 @@ public class Main {
 					initializeNewBot();
 				}
 				commands = loadedData.getCommands();
+				streamersTwitch = loadedData.getTwitchStreamers();
 			}
 			catch (JDOMException | IOException e) {
 				// TODO Auto-generated catch block
@@ -107,7 +109,7 @@ public class Main {
 	 */
 	public static boolean save() throws IOException{
 		if (noSave) return false;
-		XMLManager.compileConfigFile(bots, commands);
+		XMLManager.compileConfigFile(bots, commands, streamersTwitch);
 		return true;
 	}
 
