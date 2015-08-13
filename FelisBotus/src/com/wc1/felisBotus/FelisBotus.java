@@ -226,7 +226,7 @@ public class FelisBotus extends PircBot {
 			}
 			else{
 				sendNotice(sender, "Hello " + sender
-						+ " Welcome to the Qubed C3 IRC Channel- (I am a Bot)");
+						+ " Welcome to the Qubed C3 IRC Channel!");
 			}
 		}
 		if (isVoiceUsers()) {
@@ -432,19 +432,9 @@ public class FelisBotus extends PircBot {
 						op(channel, nick);
 					}
 				}
-				else{
-					if(user.isOp() && nick != this.getNick()){//user is op'd but is not on bots op list, so add them to the list
-						currChannel.addOp(nick);
-						addedToList.add(nick);
-					}
-				}
-			}
-			StringBuilder output = new StringBuilder("OpBot initialized.");
-			if (addedToList.size() > 0){
-				output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to saved list of Ops");
 			}
 			try {
-				if(Main.save())sendMessage(channel, output.toString());
+				if(Main.save())sendMessage(channel, "OpBot initialized.");
 			} catch (IOException e) {
 				sendMessage(channel, "Error occured while saving bot config. :[");
 				e.printStackTrace();
@@ -454,7 +444,7 @@ public class FelisBotus extends PircBot {
 			if(!opList.contains(recipient)){
 				currChannel.addOp(recipient);
 				try {
-					if(Main.save())sendMessage(channel, recipient + " has been added to the saved Op list");
+					if(Main.save())sendMessage(channel, recipient + " has been added to this bots known Ops");
 				} catch (IOException e) {
 					sendMessage(channel, "Error occured while saving bot config. :[");
 					e.printStackTrace();
@@ -475,7 +465,7 @@ public class FelisBotus extends PircBot {
 			if(opList.contains(recipient)){
 				currChannel.removeOp(recipient);
 				try {
-					if(Main.save())sendMessage(channel, recipient + " has been removed from the saved Op list");
+					if(Main.save())sendMessage(channel, recipient + " has been removed from this bots known Ops");
 				} catch (IOException e) {
 					sendMessage(channel, "Error occured while saving bot config. :[");
 					e.printStackTrace();
