@@ -30,8 +30,8 @@ import com.wc1.felisBotus.irc.IRCServer;
  */
 public class XMLManager {
 
-	
-	
+
+
 	/**
 	 * compiles an XML file based on the supplied list of bots and map of commands
 	 * @param bots List of bots to save
@@ -88,10 +88,12 @@ public class XMLManager {
 		elemRoot.addContent(elemCommands);//</Commands>
 		Element elemStreamerList = new Element("Streamers");//<Streamers>
 		Element elemStreamersTwitch = new Element("Twitch");//<Twitch>
-		for (String currStreamer:streamersTwitch){
-			Element elemCurrStreamer = new Element("Streamer");//<Streamer Name="" />
-			elemCurrStreamer.setAttribute("Name", currStreamer);
-			elemStreamersTwitch.addContent(elemCurrStreamer);
+		if (streamersTwitch != null){
+			for (String currStreamer:streamersTwitch){
+				Element elemCurrStreamer = new Element("Streamer");//<Streamer Name="" />
+				elemCurrStreamer.setAttribute("Name", currStreamer);
+				elemStreamersTwitch.addContent(elemCurrStreamer);
+			}
 		}
 		elemStreamerList.addContent(elemStreamersTwitch);//</Twitch>
 		elemRoot.addContent(elemStreamerList);//</Streamers>
