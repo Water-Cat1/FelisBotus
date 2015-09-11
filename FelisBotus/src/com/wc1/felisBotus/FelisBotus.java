@@ -268,6 +268,7 @@ public class FelisBotus extends PircBot {
 				//TODO
 				break;
 			case("joinserver"):
+				//TODO
 				break;
 			case("shutdown"):
 				commandHelper.shutdownBot(sender, message, isOp);

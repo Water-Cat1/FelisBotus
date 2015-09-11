@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jdom2.JDOMException;
 
@@ -55,7 +55,7 @@ public class Main {
 		if(reset || !config.exists()){
 			if (!config.exists()) System.out.printf("No config file found in expected place\n");
 			initializeNewBot();
-			commands = new HashMap<String, String>();
+			commands = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 		}
 		else {
 			//initilize bots with previous file

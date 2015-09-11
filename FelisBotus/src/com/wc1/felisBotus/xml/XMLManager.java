@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -143,7 +143,7 @@ public class XMLManager {
 			FelisBotus currBot = new FelisBotus(currBotName, currBotOwner, currLogin, currLoginPass, currServer);
 			bots.add(currBot);
 		}
-		Map<String, String> commands = new HashMap<String,String>(); //new map for custom commands
+		Map<String, String> commands = new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER); //new map for custom commands
 		Element elemCommands = elemRoot.getChild("Commands");
 		for (Element currCommand:elemCommands.getChildren("Command")){
 			commands.put(currCommand.getAttributeValue("Command"), currCommand.getAttributeValue("Response"));
