@@ -172,13 +172,6 @@ public class FelisBotus extends PircBot {
 	}
 
 	/**
-	 * @return the shuttingdown
-	 */
-	public boolean isShuttingdown() {
-		return shuttingdown;
-	}
-
-	/**
 	 * @param shuttingdown the shuttingdown to set
 	 */
 	public void setShuttingdown() {
