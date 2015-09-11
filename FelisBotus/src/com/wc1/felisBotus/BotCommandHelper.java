@@ -8,8 +8,8 @@ import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
 public class BotCommandHelper {
 
-	FelisBotus parentBot;
-	
+	private FelisBotus parentBot;
+
 	public BotCommandHelper(FelisBotus felisBotus) {
 		parentBot = felisBotus;
 	}
@@ -17,14 +17,18 @@ public class BotCommandHelper {
 	void twitch(String channel, String message) {
 		String[] splitMessage;
 		splitMessage = message.split(" ");
+		if (splitMessage.length == 2){
 		String userName = splitMessage[1];
 		Twitch_Stream stream = Twitch_API.getStream(userName);
 		String status = String.format("%s is live! | Game = %s | Title = %s | URL = %s", userName.toUpperCase(), stream.getGame(), stream.getStatus(), stream.getUrl());
 		if (stream.isOnline()){
-		parentBot.sendMessage(channel, status);
+			parentBot.sendMessage(channel, status);
 		}else
 		{
-		parentBot.sendMessage(channel,"Stream is Currently Offline");
+			parentBot.sendMessage(channel,"Stream is Currently Offline");
+		}
+		} else {
+			
 		}
 	}
 
@@ -66,7 +70,7 @@ public class BotCommandHelper {
 				parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"leaveserver [server]. "
 						+ "If no server is supplied then bot will leave this server");
 			}
-			else if (splitMessage.length == 1 || splitMessage[1].equals(parentBot.server.getServerAddress())){
+			else if (splitMessage.length == 1 || splitMessage[1].equals(parentBot.getIRCServer().getServerAddress())){
 				Main.removeBot(parentBot);
 			}
 			else{
@@ -89,22 +93,22 @@ public class BotCommandHelper {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ");
-			if ((!splitMessage[1].startsWith("#")) || splitMessage.length > 2){
+			if ((splitMessage.length == 2 && !splitMessage[1].startsWith("#")) || splitMessage.length > 2){
 				parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"leavechannel [channel]. "
-						+ "Channel must be prefxed by a #. If no channel is supplied then bot will leave this channel");
+						+ "Channel must be prefixed by a #. If no channel is supplied then bot will leave this channel");
 			}
 			else if (splitMessage.length == 1 || splitMessage[1].equals(channel)){
-				parentBot.partChannel(channel, "I don't hate you");
-				parentBot.server.removeChannel(channel);
-				if (parentBot.server.getChannels().size() == 0){ //not connected to any channels, disconnect from the server
-					parentBot.shuttingdown = true;
+				parentBot.partChannel(channel, "Requested to leave channel");
+				parentBot.getIRCServer().removeChannel(channel);
+				if (parentBot.getIRCServer().getChannels().size() == 0){ //not connected to any channels, disconnect from the server
+					parentBot.setShuttingdown();
 					parentBot.disconnect();
 				}
 			}
 			else{
-				if (parentBot.server.getChannels().contains(splitMessage[1])){
-					parentBot.partChannel(splitMessage[1], "I must go, my people need me");
-					parentBot.server.removeChannel(splitMessage[1]);
+				if (parentBot.getIRCServer().getChannels().contains(splitMessage[1])){
+					parentBot.partChannel(splitMessage[1], "Remote channel leave request");
+					parentBot.getIRCServer().removeChannel(splitMessage[1]);
 				}
 				else{
 					parentBot.sendNotice(sender, "I am not connected to this channel");
@@ -148,28 +152,33 @@ public class BotCommandHelper {
 	void addCommand(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		splitMessage = message.split(" ",3);
-if (isOp && splitMessage.length >= 3){
-		String result = Main.putCommand(splitMessage[1].toLowerCase(Locale.ROOT), splitMessage[2]);
-		if (result !=null){
-			parentBot.sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
+		if (isOp && splitMessage.length >= 3){
+			String result = Main.putCommand(splitMessage[1].toLowerCase(Locale.ROOT), splitMessage[2]);
+			if (result !=null){
+				parentBot.sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
+			}
+			else{
+				parentBot.sendNotice(sender, "Command successfully added :]");
+			}
+			try {
+				Main.save();
+			} catch (IOException e) {
+				parentBot.sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
+				System.out.printf("\nFailed to save bot!\n");
+				e.printStackTrace();
+			}
+		}
+		else if (splitMessage.length < 3){
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"addcommand <newCommand> <Response>");
 		}
 		else{
-			parentBot.sendNotice(sender, "Command successfully added :]");
+			parentBot.sendNotice(sender, "You must be an OP to use this command");
 		}
-		try {
-			Main.save();
-		} catch (IOException e) {
-			parentBot.sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
-			System.out.printf("\nFailed to save bot!\n");
-			e.printStackTrace();
-		}
-}
-else if (splitMessage.length < 3){
-		parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"addcommand <newCommand> <Response>");
-}
-else{
-		parentBot.sendNotice(sender, "You must be an OP to use this command");
-}
+	}
+
+	public void joinChannel(String sender, String message, boolean isOp) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

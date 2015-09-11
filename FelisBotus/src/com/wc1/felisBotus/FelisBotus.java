@@ -34,12 +34,12 @@ public class FelisBotus extends PircBot {
 	private boolean voiceUsers = true;
 
 	private String owner;
-	IRCServer server; // this thing will contain all info on the server,
+	private IRCServer server; // this thing will contain all info on the server,
 	// channels and ops in said channels.
 	private String loginPass;
 	private BotCommandHelper commandHelper = new BotCommandHelper(this);
 
-	boolean shuttingdown = false;
+	private boolean shuttingdown = false;
 
 	/**Version of the bot*/
 	public static final String version = "C3 Java IRC Bot - V0.5.W";
@@ -171,6 +171,20 @@ public class FelisBotus extends PircBot {
 		return owner;
 	}
 
+	/**
+	 * @return the shuttingdown
+	 */
+	public boolean isShuttingdown() {
+		return shuttingdown;
+	}
+
+	/**
+	 * @param shuttingdown the shuttingdown to set
+	 */
+	public void setShuttingdown() {
+		this.shuttingdown = true;
+	}
+
 	public boolean isVoiceUsers() {
 		return voiceUsers;
 	}
@@ -196,6 +210,7 @@ public class FelisBotus extends PircBot {
 					if (retryCount > 5){
 						shuttingdown = true;
 						Main.removeBot(this);
+						break;
 					}
 				}
 			}
@@ -236,7 +251,7 @@ public class FelisBotus extends PircBot {
 
 	}
 
-		public void onKick(String channel, String kickerNick, String login,
+	protected void onKick(String channel, String kickerNick, String login,
 				String hostname, String recipientNick, String reason) {
 			if (recipientNick.equalsIgnoreCase(getNick())) {
 				joinChannel(channel);
@@ -260,12 +275,12 @@ public class FelisBotus extends PircBot {
 				break;
 			case("leavechannel"):
 				commandHelper.leaveChannel(channel, sender, message, isOp);
-			break;
+				break;
 			case("leaveserver"):
 				commandHelper.leaveServer(sender, message, isOp);
 				break;
 			case("joinchannel"):
-				//TODO
+				commandHelper.joinChannel(sender, message, isOp);
 				break;
 			case("joinserver"):
 				//TODO
