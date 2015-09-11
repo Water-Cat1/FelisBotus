@@ -87,7 +87,7 @@ public class FelisBotus extends PircBot {
 	public void connectConsole(){
 		this.setAutoNickChange(true);
 		if (server == null){
-			String newServer = System.console().readLine("Please enter a server address.\n");
+			String newServer = Main.readConsole("Please enter a server address.\n");
 			server = new IRCServer(newServer);
 		}
 		try {
@@ -102,7 +102,7 @@ public class FelisBotus extends PircBot {
 			}
 			else{
 				Thread.sleep(5000);
-				pass = new String(System.console().readPassword("\nPlease enter a password to verify the bot on %s\n", this.server.getServerAddress()));
+				pass = new String(Main.readConsolePass(String.format("\nPlease enter a password to verify the bot on %s\n", this.server.getServerAddress())));
 			}
 			if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
 				sendMessage("NickServ", "GHOST " + this.getName() + " " + pass.toString());
@@ -112,9 +112,9 @@ public class FelisBotus extends PircBot {
 			identify(pass);
 			Thread.sleep(1000);
 			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
-				String newChannel = System.console().readLine("Please enter a channel name to connect to.\n");
+				String newChannel = Main.readConsole("Please enter a channel name to connect to.\n");
 				while (!newChannel.startsWith("#")){
-					newChannel = System.console().readLine("Channel name requires a '#' symbol at the start.\n");
+					newChannel = Main.readConsole("Channel name requires a '#' symbol at the start.\n");
 				}
 				server.addChannel(new IRCChannel(newChannel));
 				this.joinChannel(newChannel);
@@ -179,7 +179,7 @@ public class FelisBotus extends PircBot {
 	@Override
 	public void log(String line) {
 
-		System.out.println(line + "\n");
+		System.out.printf(line + "\n");
 	}
 
 	public void onDisconnect() {
@@ -488,10 +488,9 @@ public class FelisBotus extends PircBot {
 		}
 	}
 
-	public void onUserList(String channel, User[] users) {
+	protected void onUserList(String channel, User[] users) {
 		IRCChannel currChannel = server.getChannel(channel);
 		Set<String> opList = currChannel.getOpList();
-		server.getChannel(channel).setBotIsOp(true);
 		List<String> addedToList = new ArrayList<String>();
 		for (int i = 0; i < users.length; i++) {
 			User user = users[i];

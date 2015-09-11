@@ -1,8 +1,9 @@
 package com.wc1.felisBotus;
 
-import java.io.Console;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +28,13 @@ public class Main {
 	private static List<String> streamersTwitch;
 	private static boolean noSave = false;
 	private static boolean devEnviro = false; //if system.console() returns null then set this true
-	
+
 	/**
 	 * Location of the config file
 	 */
 	public static final String configFile = "./config.xml";
-	
-	
+
+
 
 	/**
 	 * Main Method for FelisBotus.
@@ -43,6 +44,9 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		boolean reset = false;
+		if (System.console() == null){
+			devEnviro = true;
+		}
 		for(int i = 0; i < args.length;i++){
 			if (args[i].equals("-reset")) reset = true;
 			if (args[i].equals("-noSave")) noSave = true;
@@ -85,22 +89,21 @@ public class Main {
 		}
 		//listen to console for specific commands
 		while(true){
-				
-			
+
+
 		}
 	}
 
 	private static void initializeNewBot() {
-		Console console = System.console();
-		console.printf("Initilizing for first time use\n\n");
+		System.out.printf("Initilizing for first time use\n\n");
 		//bot info
-		String owner = console.readLine("What is your IRC Name? (Not the bot's)\n");
-		String botName = console.readLine("What would you like this bot to be called?\n");
-		String login = console.readLine("What is the login email address for the bot?\n");
-		String response = console.readLine("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
+		String owner = readConsole("What is your IRC Name? (Not the bot's)\n");
+		String botName = readConsole("What would you like this bot to be called?\n");
+		String login = readConsole("What is the login email address for the bot?\n");
+		String response = readConsole("Would you like to save a password for authentication? Y/N\n(Not Advised; this will be stored in plaintext)\n");
 		String loginPass = null;
 		if (response.startsWith("y") || response.startsWith("Y")){//could probably be smart about this but eh, only expect y/n or yes/no
-			loginPass = console.readPassword("Please enter a password").toString();
+			loginPass = new String(readConsolePass("Please enter a password"));
 		}
 		bots = new ArrayList<FelisBotus>();
 		bots.add(new FelisBotus(botName, owner, login, loginPass));//initilize new bot
@@ -137,7 +140,7 @@ public class Main {
 	public static String putCommand(String command, String response){
 		return commands.put(command, response);
 	}
-	
+
 	public static String removeCommand(String command){
 		return commands.remove(command);
 	}
@@ -148,7 +151,7 @@ public class Main {
 		try {
 			save();
 		} catch (IOException e) {
-			System.console().printf("\nError saving config file\n");
+			System.out.printf("\nError saving config file\n");
 			e.printStackTrace();
 		}
 	}
@@ -160,9 +163,9 @@ public class Main {
 			}
 		}
 		return null;
-		
+
 	}
-	
+
 	public static void shutItDown(boolean force) throws IOException{
 		try {
 			Main.save();
@@ -173,9 +176,47 @@ public class Main {
 			bot.shutDown();
 		}
 		System.exit(0);
-		
+
 	}
 
 	//TODO create a new bot on command
 	//TODO remove a bot on command
+
+	public static String readConsole(String query){
+		if (devEnviro){
+			System.out.printf("%s\n", query);
+			InputStreamReader inStream = new InputStreamReader(System.in);
+			BufferedReader inReader = new BufferedReader(inStream);
+			try {
+				String result = inReader.readLine();
+				inReader.close();
+				inStream.close();
+				return result;
+				} catch (IOException e) {
+					System.out.printf("Error attempting to read console\n");
+				}
+			return "";
+		} else{
+			return System.console().readLine(query);
+		}
+	}
+
+	public static String readConsolePass(String query){
+		if (devEnviro){
+			System.out.printf("%s\n", query);
+			InputStreamReader inStream = new InputStreamReader(System.in);
+			BufferedReader inReader = new BufferedReader(inStream);
+			try {
+				String result = inReader.readLine();
+				inReader.close();
+				inStream.close();
+				return result;
+				} catch (IOException e) {
+					System.out.printf("Error attempting to read console\n");
+				}
+			return "";
+		} else{
+			return new String(System.console().readPassword(query));
+		}
+	}
 }
