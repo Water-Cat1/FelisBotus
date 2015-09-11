@@ -26,6 +26,7 @@ public class Main {
 	private static Map<String, String> commands;
 	private static List<String> streamersTwitch;
 	private static boolean noSave = false;
+	private static boolean devEnviro = false; //if system.console() returns null then set this true
 	
 	/**
 	 * Location of the config file
@@ -82,8 +83,11 @@ public class Main {
 		for (FelisBotus bot:bots){
 			bot.connectConsole();
 		}
-		//TODO from here listen to console for specific commands
-
+		//listen to console for specific commands
+		while(true){
+				
+			
+		}
 	}
 
 	private static void initializeNewBot() {

@@ -21,6 +21,8 @@ import org.jibble.pircbot.User;
 
 import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.irc.IRCServer;
+import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
+import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
 /**
  * Bot for the program. Each instance can only connect to one server, so several instances will need to be created to connect to several servers.
@@ -235,13 +237,14 @@ public class FelisBotus extends PircBot {
 
 	}
 
-	//	public void onKick(String channel, String kickerNick, String login,
-	//			String hostname, String recipientNick, String reason) {
-	//		if (recipientNick.equalsIgnoreCase(getNick())) {
-	//			joinChannel(channel);
-	//			sendMessage(channel, "Guess who is baaaaack!");
-	//		}
-	//	}
+		public void onKick(String channel, String kickerNick, String login,
+				String hostname, String recipientNick, String reason) {
+			if (recipientNick.equalsIgnoreCase(getNick())) {
+				joinChannel(channel);
+				sendMessage(channel, "Guess who is baaaaack!");
+				sendNotice(kickerNick, "Please use the shutdown command to safely shut down me. I don't like being kicked.");
+			}
+		}
 
 	@Override
 	protected void onMessage(String channel, String sender, String login,
@@ -389,6 +392,18 @@ public class FelisBotus extends PircBot {
 					sendNotice(sender, "You must be an OP to use this command");
 				}
 			break;
+			case("twitch"):
+				splitMessage = message.split(" ");
+				String userName = splitMessage[1];
+				Twitch_Stream stream = Twitch_API.getStream(userName);
+				String status = String.format("%s is live! | Game = %s | Title = %s | URL = %s", userName.toUpperCase(), stream.getGame(), stream.getStatus(), stream.getUrl());
+				if (stream.isOnline()){
+				sendMessage(channel, status);
+				}else
+				{
+				sendMessage(channel,"Stream is Currently Offline");
+				}
+				break;
 			default:
 				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
 				if (response != null){
@@ -411,8 +426,8 @@ public class FelisBotus extends PircBot {
 	@Override
 	protected void onNotice(String sourceNick, String sourceLogin,
 			String sourceHostname, String target, String notice) {
-		// TODO Auto-generated method stub
-		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
+		
+		//sendNotice(sourceNick, "What are you trying to notify me about? Has timmy fallen down the well?!");
 	}
 
 	@Override
@@ -422,7 +437,6 @@ public class FelisBotus extends PircBot {
 		Set<String> opList = currChannel.getOpList();
 		if (recipient.equals(this.getNick())){
 			server.getChannel(channel).setBotIsOp(true);
-			List<String> addedToList = new ArrayList<String>();
 			User[] users = getUsers(channel);
 			for (int i = 0; i < users.length; i++) {
 				User user = users[i];
