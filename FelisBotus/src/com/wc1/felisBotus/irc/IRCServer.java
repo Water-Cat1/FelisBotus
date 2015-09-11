@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Class to contain information about an IRC server
@@ -13,7 +14,7 @@ import java.util.Set;
  */
 public class IRCServer {
 
-	private Map<String, IRCChannel> channels = new HashMap<String, IRCChannel>();
+	private Map<String, IRCChannel> channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
 	private String serverAddress;
 
 
