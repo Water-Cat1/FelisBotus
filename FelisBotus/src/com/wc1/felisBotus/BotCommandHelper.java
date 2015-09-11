@@ -8,52 +8,13 @@ import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
 public class BotCommandHelper {
 
-	private FelisBotus parentBot;
+	FelisBotus parentBot;
 	
 	public BotCommandHelper(FelisBotus felisBotus) {
 		parentBot = felisBotus;
 	}
 
-	public void runBotCommand(String channel, String sender, String message) {
-		boolean isOp = parentBot.server.getChannel(channel).checkOP(sender);
-		String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
-		switch(lowercaseCommand.substring(FelisBotus.commandStart.length())){ //substring removes the command section of the string
-		case("addcommand"):
-			addCommand(sender, message, isOp);
-			break;
-		case("removecommand"):
-			removeCommand(sender, message, isOp);
-			break;
-		case("leavechannel"):
-			leaveChannel(channel, sender, message, isOp);
-		break;
-		case("leaveserver"):
-			leaveServer(sender, message, isOp);
-			break;
-		case("joinchannel"):
-			//TODO
-			break;
-		case("joinserver"):
-			break;
-		case("shutdown"):
-			shutdownBot(sender, message, isOp);
-			break;
-		case("twitch"):
-			twitch(channel, message);
-			break;
-		default:
-			String response = Main.getResponse(lowercaseCommand.substring(FelisBotus.commandStart.length()));
-			if (response != null){
-				parentBot.sendMessage(channel, response);
-			}
-			else{
-				parentBot.sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
-			}
-	
-		}
-	}
-
-	private void twitch(String channel, String message) {
+	void twitch(String channel, String message) {
 		String[] splitMessage;
 		splitMessage = message.split(" ");
 		String userName = splitMessage[1];
@@ -67,7 +28,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void shutdownBot(String sender, String message, boolean isOp) {
+	void shutdownBot(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ");
@@ -97,7 +58,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void leaveServer(String sender, String message, boolean isOp) {
+	void leaveServer(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ");
@@ -123,7 +84,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void leaveChannel(String channel, String sender, String message,
+	void leaveChannel(String channel, String sender, String message,
 			boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
@@ -155,7 +116,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void removeCommand(String sender, String message, boolean isOp) {
+	void removeCommand(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ",3);
@@ -184,7 +145,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void addCommand(String sender, String message, boolean isOp) {
+	void addCommand(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		splitMessage = message.split(" ",3);
 if (isOp && splitMessage.length >= 3){

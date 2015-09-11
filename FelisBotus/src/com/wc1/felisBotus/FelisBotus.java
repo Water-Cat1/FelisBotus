@@ -12,6 +12,7 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.jibble.pircbot.IrcException;
@@ -248,7 +249,42 @@ public class FelisBotus extends PircBot {
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
-			commandHelper.runBotCommand(channel, sender, message);
+			boolean isOp = server.getChannel(channel).checkOP(sender);
+			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
+			switch(lowercaseCommand.substring(FelisBotus.commandStart.length())){ //substring removes the command section of the string
+			case("addcommand"):
+				commandHelper.addCommand(sender, message, isOp);
+				break;
+			case("removecommand"):
+				commandHelper.removeCommand(sender, message, isOp);
+				break;
+			case("leavechannel"):
+				commandHelper.leaveChannel(channel, sender, message, isOp);
+			break;
+			case("leaveserver"):
+				commandHelper.leaveServer(sender, message, isOp);
+				break;
+			case("joinchannel"):
+				//TODO
+				break;
+			case("joinserver"):
+				break;
+			case("shutdown"):
+				commandHelper.shutdownBot(sender, message, isOp);
+				break;
+			case("twitch"):
+				commandHelper.twitch(channel, message);
+				break;
+			default:
+				String response = Main.getResponse(lowercaseCommand.substring(FelisBotus.commandStart.length()));
+				if (response != null){
+					sendMessage(channel, response);
+				}
+				else{
+					sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
+				}
+		
+			}
 		}
 
 	}
