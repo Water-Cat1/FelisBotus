@@ -12,7 +12,6 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.jibble.pircbot.IrcException;
@@ -21,8 +20,6 @@ import org.jibble.pircbot.User;
 
 import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.irc.IRCServer;
-import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
-import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
 /**
  * Bot for the program. Each instance can only connect to one server, so several instances will need to be created to connect to several servers.
@@ -36,11 +33,12 @@ public class FelisBotus extends PircBot {
 	private boolean voiceUsers = true;
 
 	private String owner;
-	private IRCServer server; // this thing will contain all info on the server,
+	IRCServer server; // this thing will contain all info on the server,
 	// channels and ops in said channels.
 	private String loginPass;
+	private BotCommandHelper commandHelper = new BotCommandHelper(this);
 
-	private boolean shuttingdown = false;
+	boolean shuttingdown = false;
 
 	/**Version of the bot*/
 	public static final String version = "C3 Java IRC Bot - V0.5.W";
@@ -250,175 +248,10 @@ public class FelisBotus extends PircBot {
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
-			boolean isOp = server.getChannel(channel).checkOP(sender);
-			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
-			String[] splitMessage = {""};
-			switch(lowercaseCommand.substring(commandStart.length())){ //substring removes the command section of the string
-			case("addcommand"):
-				splitMessage = message.split(" ",3);
-			if (isOp && splitMessage.length >= 3){
-				String result = Main.putCommand(splitMessage[1].toLowerCase(Locale.ROOT), splitMessage[2]);
-				if (result !=null){
-					sendNotice(sender, "Command successfully overwritten :]. Previous response was '" +result+"'");
-				}
-				else{
-					sendNotice(sender, "Command successfully added :]");
-				}
-				try {
-					Main.save();
-				} catch (IOException e) {
-					sendNotice(sender, "Failed to save command. Command will be lost on bot restart :[");
-					System.out.printf("\nFailed to save bot!\n");
-					e.printStackTrace();
-				}
-			}
-			else if (splitMessage.length < 3){
-				sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"addcommand <newCommand> <Response>");
-			}
-			else{
-				sendNotice(sender, "You must be an OP to use this command");
-			}
-			break;
-			case("removecommand"):
-				if (isOp){
-					splitMessage = message.split(" ",3);
-					if (splitMessage.length == 2){
-						String result = Main.removeCommand(splitMessage[1]);
-						if (result==null){
-							sendNotice(sender, splitMessage[1] + " was never a saved command");
-						}
-						else{
-							sendNotice(sender, "Command successfully removed! :]");
-							try {
-								Main.save();
-							} catch (IOException e) {
-								sendNotice(sender, "Failed to save command. Command will come back on bot restart :[");
-								System.out.printf("\nFailed to save bot!\n");
-								e.printStackTrace();
-							}
-						}
-					}
-					else{
-						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"removecommand <oldCommand>");
-					}
-				}
-				else{
-					sendNotice(sender, "You must be an OP to use this command");
-				}
-			break;
-			case("leavechannel"):
-				if (isOp){
-					splitMessage = message.split(" ");
-					if ((!splitMessage[1].startsWith("#")) || splitMessage.length > 2){
-						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"leavechannel [channel]. "
-								+ "Channel must be prefxed by a #. If no channel is supplied then bot will leave this channel");
-					}
-					else if (splitMessage.length == 1 || splitMessage[1].equals(channel)){
-						partChannel(channel, "I don't hate you");
-						server.removeChannel(channel);
-						if (server.getChannels().size() == 0){ //not connected to any channels, disconnect from the server
-							shuttingdown = true;
-							disconnect();
-						}
-					}
-					else{
-						if (server.getChannels().contains(splitMessage[1])){
-							partChannel(splitMessage[1], "I must go, my people need me");
-							server.removeChannel(splitMessage[1]);
-						}
-						else{
-							sendNotice(sender, "I am not connected to this channel");
-						}
-					}
-				}
-				else{
-					sendNotice(sender, "You must be an OP to use this command");
-				}
-			break;
-			case("leaveserver"):
-				if (isOp){
-					splitMessage = message.split(" ");
-					if (splitMessage.length > 2){
-						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"leaveserver [server]. "
-								+ "If no server is supplied then bot will leave this server");
-					}
-					else if (splitMessage.length == 1 || splitMessage[1].equals(server.getServerAddress())){
-						Main.removeBot(this);
-					}
-					else{
-						FelisBotus botToDisconnect = Main.getBotConnectedTo(splitMessage[1]);
-						if (botToDisconnect == null){
-							sendNotice(sender, "I am not connected to that server");
-						}
-						else{
-							Main.removeBot(botToDisconnect);
-							sendNotice(sender, "Successfully disconnected from " + splitMessage[1]);
-						} 
-					}
-				}else{
-					sendNotice(sender, "You must be an OP to use this command");
-				}
-			break;
-			case("joinchannel"):
-
-				break;
-			case("joinserver"):
-				break;
-			case("shutdown"):
-				if (isOp){
-					splitMessage = message.split(" ");
-					if (splitMessage.length == 2 && splitMessage[1].equalsIgnoreCase("force")){
-						try {
-							Main.shutItDown(true);
-						} catch (IOException e) {
-							//Will never throw exception here
-						}
-					}
-					else if (splitMessage.length == 1){
-						try {
-							Main.shutItDown(false);
-						} catch (IOException e) {
-							sendNotice(sender, "Error while attempting to save before shutdown :[ \n"
-									+ "If you wish to ignore this use " + commandStart + "shutdown force.");
-							System.out.printf("Error encounted while attempting to save while shuting down\n");
-							e.printStackTrace();
-						}
-					}
-					else{
-						sendNotice(sender, "Syntax Error. Correct usage is " + commandStart +"shutdown [force]. "
-								+ "If the word 'force' is supplied then bot will shutdown even if an error occurs.");
-					}
-				}else{
-					sendNotice(sender, "You must be an OP to use this command");
-				}
-			break;
-			case("twitch"):
-				splitMessage = message.split(" ");
-				String userName = splitMessage[1];
-				Twitch_Stream stream = Twitch_API.getStream(userName);
-				String status = String.format("%s is live! | Game = %s | Title = %s | URL = %s", userName.toUpperCase(), stream.getGame(), stream.getStatus(), stream.getUrl());
-				if (stream.isOnline()){
-				sendMessage(channel, status);
-				}else
-				{
-				sendMessage(channel,"Stream is Currently Offline");
-				}
-				break;
-			default:
-				String response = Main.getResponse(lowercaseCommand.substring(commandStart.length()));
-				if (response != null){
-					sendMessage(channel, response);
-				}
-				else{
-					sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
-				}
-
-			}
+			commandHelper.runBotCommand(channel, sender, message);
 		}
 
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
