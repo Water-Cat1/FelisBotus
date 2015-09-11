@@ -2,7 +2,6 @@ package com.wc1.felisBotus.irc;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -39,7 +38,7 @@ public class IRCServer {
 	public IRCServer(String serverAddress) {
 		super();
 		this.serverAddress = serverAddress;
-		this.channels = new HashMap<String,IRCChannel>();
+		this.channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
 	}
 
 	/**
