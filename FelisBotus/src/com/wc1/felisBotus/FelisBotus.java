@@ -374,9 +374,24 @@ public class FelisBotus extends PircBot {
 	 * Method to have the bot join a channel in the current server. Use this instead of pircbot joinChannel.
 	 * @param channel Channel to join
 	 */
-	public void joinIRCChannel(String channel){
+	public boolean joinIRCChannel(String channel){
 		joinChannel(channel);
-		server.addChannel(new IRCChannel(channel));
+		int numAttempts = 0;
+		while (true){
+			for(String currChannel:getChannels()){
+				if (currChannel.equalsIgnoreCase(channel)){
+					server.addChannel(new IRCChannel(channel));
+					return true;
+				}
+				numAttempts++;
+				if (numAttempts > 5) return false;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	/**
@@ -384,9 +399,24 @@ public class FelisBotus extends PircBot {
 	 * @param channel Channel to join
 	 * @param pass password for the channel
 	 */
-	public void joinIRCChannel(String channel, String pass){
+	public boolean joinIRCChannel(String channel, String pass){
 		joinChannel(channel, pass);
-		server.addChannel(new IRCChannel(channel, pass));
+		int numAttempts = 0;
+		while (true){
+			for(String currChannel:getChannels()){
+				if (currChannel.equalsIgnoreCase(channel)){
+					server.addChannel(new IRCChannel(channel, pass));
+					return true;
+				}
+				numAttempts++;
+				if (numAttempts > 5) return false;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
