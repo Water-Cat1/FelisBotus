@@ -118,8 +118,12 @@ public class FelisBotus extends PircBot {
 				server.addChannel(new IRCChannel(newChannel));
 				this.joinChannel(newChannel);
 			}else{//Connect to all default channels
-				for (String channel:server.getChannelNames()){
-					this.joinChannel(channel); //TODO support for channels with keys
+				for (IRCChannel channel:server.getChannels()){
+					if (channel.getPass()==null || channel.getPass().isEmpty()){
+						this.joinChannel(channel.getName());
+					} else{
+						this.joinChannel(channel.getName(), channel.getPass());
+					}
 				}
 			}
 			Main.save();
@@ -372,7 +376,7 @@ public class FelisBotus extends PircBot {
 	 */
 	public void joinIRCChannel(String channel, String pass){
 		joinChannel(channel, pass);
-		server.addChannel(new IRCChannel(channel));
+		server.addChannel(new IRCChannel(channel, pass));
 	}
 
 	/* (non-Javadoc)

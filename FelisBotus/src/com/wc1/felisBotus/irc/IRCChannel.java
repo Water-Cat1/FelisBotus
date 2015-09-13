@@ -13,28 +13,38 @@ import java.util.Set;
 public class IRCChannel {
 
 	private String name;
+	private String pass;
 	private Set<String> ops;
 	private boolean botIsOP = false;
 
+	
 	/**
-	 * Create an instance of IRCServer supplying the name and set of ops
+	 * Create an instance of IRCChannel supply the name, password and set of ops
 	 * @param name
+	 * @param pass
 	 * @param ops
 	 */
-	public IRCChannel(String name, Set<String> ops) {
+	public IRCChannel(String name, String pass, Set<String> ops){
 		super();
 		this.ops = ops;
 		this.name = name;
+		this.pass = pass;
 	}
-	
 	/**
-	 * Create an instance of IRCServer with just the channel name.
+	 * Create an instance of IRCChannel with just the channel name.
 	 * @param name
 	 */
 	public IRCChannel(String name) {
 		super();
 		this.ops = new HashSet<String>();
 		this.name = name;
+	}
+	
+	public IRCChannel(String name, String pass){
+		super();
+		this.ops = new HashSet<String>();
+		this.name = name;
+		this.pass = pass;
 	}
 
 	/**
@@ -43,6 +53,14 @@ public class IRCChannel {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Get the saved channel password
+	 * @return
+	 */
+	public String getPass(){
+		return pass;
 	}
 
 	/**

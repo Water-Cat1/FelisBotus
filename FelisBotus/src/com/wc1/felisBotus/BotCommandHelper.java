@@ -1,10 +1,8 @@
 package com.wc1.felisBotus;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Locale;
 
-import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 

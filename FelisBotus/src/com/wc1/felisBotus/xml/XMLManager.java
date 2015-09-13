@@ -52,9 +52,7 @@ public class XMLManager {
 				elemCurrBot.setAttribute("Owner", currBot.getOwner());
 				elemCurrBot.setAttribute("Login", currBot.getLogin());
 				String loginPass = currBot.getLoginPass();
-				if (loginPass != null){
-					elemCurrBot.setAttribute("LoginPass", loginPass);
-				}
+				if (loginPass != null) elemCurrBot.setAttribute("LoginPass", loginPass);
 				//save single server associated with this bot
 				IRCServer currServer = currBot.getIRCServer(); 
 				Element elemCurrServer = new Element("Server");//<Server Address="">
@@ -64,7 +62,8 @@ public class XMLManager {
 				Element currServerChannels = new Element("Channels");//<Channels>
 				for (IRCChannel currChannel:currServer.getChannels()){
 					Element elemCurrChannel = new Element("Channel");
-					elemCurrChannel.setAttribute("Name",currChannel.getName().substring(1)); //<Channel> //Do channels have certain things like passwords?
+					elemCurrChannel.setAttribute("Name",currChannel.getName().substring(1)); //<Channel> 
+					if (currChannel.getPass() != null) elemCurrChannel.setAttribute("Pass", currChannel.getPass());
 					//save ops for this channel
 					Element elemCurrChannelOps = new Element("Ops");//<Ops>
 					for (String currOp:currChannel.getOpList()){
@@ -131,12 +130,13 @@ public class XMLManager {
 			Set<IRCChannel> channels = new HashSet<IRCChannel>();
 			for (Element elemCurrChannel:elemChannels.getChildren("Channel")){
 				String currChannelName = "#" + elemCurrChannel.getAttributeValue("Name");
+				String currChannelPass = elemCurrChannel.getAttribute("Pass").toString();
 				Element elemOps = elemCurrChannel.getChild("Ops");
 				Set<String> ops = new HashSet<String>();
 				for (Element elemCurrOp:elemOps.getChildren()){
 					ops.add(elemCurrOp.getName());
 				}
-				IRCChannel currChannel = new IRCChannel(currChannelName, ops);
+				IRCChannel currChannel = new IRCChannel(currChannelName, currChannelPass, ops);
 				channels.add(currChannel);
 			}
 			IRCServer currServer = new IRCServer(currServerAddress, channels);
