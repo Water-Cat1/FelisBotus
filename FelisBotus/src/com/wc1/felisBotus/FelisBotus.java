@@ -110,7 +110,7 @@ public class FelisBotus extends PircBot {
 			}
 			identify(pass);
 			Thread.sleep(1000);
-			if (server.getChannels().size() == 0){ //if no default channels then connect to a new ones
+			if (server.getChannelNames().size() == 0){ //if no default channels then connect to a new ones
 				String newChannel = Main.readConsole("Please enter a channel name to connect to.\n");
 				while (!newChannel.startsWith("#")){
 					newChannel = Main.readConsole("Channel name requires a '#' symbol at the start.\n");
@@ -118,8 +118,8 @@ public class FelisBotus extends PircBot {
 				server.addChannel(new IRCChannel(newChannel));
 				this.joinChannel(newChannel);
 			}else{//Connect to all default channels
-				for (IRCChannel channel:server.getChannels()){
-					this.joinChannel(channel.getName()); //TODO support for channels with keys
+				for (String channel:server.getChannelNames()){
+					this.joinChannel(channel); //TODO support for channels with keys
 				}
 			}
 			Main.save();
@@ -182,12 +182,6 @@ public class FelisBotus extends PircBot {
 		return voiceUsers;
 	}
 
-	@Override
-	public void log(String line) {
-
-		System.out.printf(line + "\n");
-	}
-
 	public void onDisconnect() {
 		if (shuttingdown){
 			Main.removeBot(this);
@@ -213,8 +207,8 @@ public class FelisBotus extends PircBot {
 	public void shutDown(){
 		shuttingdown = true;
 		if(isConnected()){
-			for (IRCChannel channel:server.getChannels()){
-				partChannel(channel.getName(), "Shutting Down");
+			for (String channel:server.getChannelNames()){
+				partChannel(channel, "Shutting Down");
 			}
 			disconnect();
 		}
@@ -234,8 +228,8 @@ public class FelisBotus extends PircBot {
 				sendNotice(sender, "Greetings commander! The qube monkeys are ready for testing!");
 			}
 			else{
-				sendNotice(sender, "Hello " + sender
-						+ " Welcome to the Qubed C3 IRC Channel!");
+				//sendNotice(sender, "Hello " + sender
+				//		+ " Welcome to the Qubed C3 IRC Channel!");
 			}
 		}
 		if (isVoiceUsers()) {
@@ -257,43 +251,9 @@ public class FelisBotus extends PircBot {
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
-			boolean isOp = server.getChannel(channel).checkOP(sender);
-			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
-			switch(lowercaseCommand.substring(FelisBotus.commandStart.length())){ //substring removes the command section of the string
-			case("addcommand"):
-				commandHelper.addCommand(sender, message, isOp);
-				break;
-			case("removecommand"):
-				commandHelper.removeCommand(sender, message, isOp);
-				break;
-			case("leavechannel"):
-				commandHelper.leaveChannel(channel, sender, message, isOp);
-				break;
-			case("leaveserver"):
-				commandHelper.leaveServer(sender, message, isOp);
-				break;
-			case("joinchannel"):
-				commandHelper.joinChannel(sender, message, isOp);
-				break;
-			case("joinserver"):
-				//TODO
-				break;
-			case("shutdown"):
-				commandHelper.shutdownBot(sender, message, isOp);
-				break;
-			case("twitch"):
-				commandHelper.twitch(channel, message);
-				break;
-			default:
-				String response = Main.getResponse(lowercaseCommand.substring(FelisBotus.commandStart.length()));
-				if (response != null){
-					sendMessage(channel, response);
-				}
-				else{
-					sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
-				}
-		
-			}
+			
+			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0].substring(FelisBotus.commandStart.length());
+			commandHelper.runBotCommand(this, channel, sender, message, lowercaseCommand);
 		}
 
 	}
@@ -394,6 +354,25 @@ public class FelisBotus extends PircBot {
 
 	public void setVoiceUsers(boolean voiceUsers) {
 		this.voiceUsers = voiceUsers;
+	}
+	
+	/**
+	 * Method to have the bot join a channel in the current server. Use this instead of pircbot joinChannel.
+	 * @param channel Channel to join
+	 */
+	public void joinIRCChannel(String channel){
+		joinChannel(channel);
+		server.addChannel(new IRCChannel(channel));
+	}
+	
+	/**
+	 * Method to have the bot join a channel in the current server. Use this instead of pircbot joinChannel.
+	 * @param channel Channel to join
+	 * @param pass password for the channel
+	 */
+	public void joinIRCChannel(String channel, String pass){
+		joinChannel(channel, pass);
+		server.addChannel(new IRCChannel(channel));
 	}
 
 	/* (non-Javadoc)

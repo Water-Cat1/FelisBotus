@@ -1,8 +1,10 @@
 package com.wc1.felisBotus;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Locale;
 
+import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
@@ -13,8 +15,51 @@ public class BotCommandHelper {
 	public BotCommandHelper(FelisBotus felisBotus) {
 		parentBot = felisBotus;
 	}
+	
+	public void runBotCommand(FelisBotus felisBotus, String channel, String sender, String message, String lowercaseCommand) {
+		boolean isOp = parentBot.getIRCServer().getChannel(channel).checkOP(sender);
+		switch(lowercaseCommand){ //substring removes the command section of the string
+		case("addcommand"):
+			addCommand(sender, message, isOp);
+			break;
+		case("removecommand"):
+			removeCommand(sender, message, isOp);
+			break;
+		case("leavechannel"):
+			leaveChannel(channel, sender, message, isOp);
+			break;
+		case("leaveserver"):
+			leaveServer(sender, message, isOp);
+			break;
+		case("joinchannel"):
+			joinChannel(sender, message, isOp);
+			break;
+		case("joinserver"):
+			//TODO
+			break;
+		case("shutdown"):
+			shutdownBot(sender, message, isOp);
+			break;
+		case("twitch"):
+			twitch(channel, message);
+			break;
+		case("listchannels"):
+			getChannels(channel, sender);
+			break;
+		default:
+			String response = Main.getResponse(lowercaseCommand.substring(FelisBotus.commandStart.length()));
+			if (response != null){
+				felisBotus.sendMessage(channel, response);
+			}
+			else{
+				felisBotus.sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
+			}
+	
+		}
+	}
+	
 
-	void twitch(String channel, String message) {
+	private void twitch(String channel, String message) {
 		String[] splitMessage;
 		splitMessage = message.split(" ");
 		if (splitMessage.length == 2){
@@ -32,7 +77,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	void shutdownBot(String sender, String message, boolean isOp) {
+	private void shutdownBot(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ");
@@ -62,7 +107,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	void leaveServer(String sender, String message, boolean isOp) {
+	private void leaveServer(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ");
@@ -88,7 +133,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	void leaveChannel(String channel, String sender, String message,
+	private void leaveChannel(String channel, String sender, String message,
 			boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
@@ -106,7 +151,7 @@ public class BotCommandHelper {
 				}
 			}
 			else{
-				if (parentBot.getIRCServer().getChannels().contains(splitMessage[1])){
+				if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
 					parentBot.partChannel(splitMessage[1], "Remote channel leave request");
 					parentBot.getIRCServer().removeChannel(splitMessage[1]);
 				}
@@ -120,7 +165,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	void removeCommand(String sender, String message, boolean isOp) {
+	private void removeCommand(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		if (isOp){
 			splitMessage = message.split(" ",3);
@@ -149,7 +194,7 @@ public class BotCommandHelper {
 		}
 	}
 
-	void addCommand(String sender, String message, boolean isOp) {
+	private void addCommand(String sender, String message, boolean isOp) {
 		String[] splitMessage;
 		splitMessage = message.split(" ",3);
 		if (isOp && splitMessage.length >= 3){
@@ -176,9 +221,34 @@ public class BotCommandHelper {
 		}
 	}
 
-	public void joinChannel(String sender, String message, boolean isOp) {
-		// TODO Auto-generated method stub
+	private void joinChannel(String sender, String message, boolean isOp) {
+		if (isOp){
+			String[] splitMessage = message.split(" ");
+			if ((splitMessage.length == 2 && !splitMessage[1].startsWith("#")) || splitMessage.length > 3 || splitMessage.length < 2){
+				parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"joinchannel <channel> [pass]. "
+						+ "Channel must be prefixed by a #.");
+			}
+			else if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
+				parentBot.sendNotice(sender, "This bot is already connected to that channel");
+			}
+			else if (splitMessage.length == 2){
+				parentBot.joinIRCChannel(splitMessage[1]);
+			}
+			else if (splitMessage.length == 3){ //password supplied
+				parentBot.joinIRCChannel(splitMessage[1], splitMessage[2]);
+			}
+		}else{
+			parentBot.sendNotice(sender, "You must be an OP to use this command");
+		}
 
 	}
+	
+	private void getChannels(String channel, String sender){
+		String[] channelNames = (String[]) parentBot.getIRCServer().getChannelNames().toArray(new String[0]);
+		parentBot.sendMessage(channel, "Channels in this server I am currently connected to are:");
+		parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
+	}
+
+	
 
 }

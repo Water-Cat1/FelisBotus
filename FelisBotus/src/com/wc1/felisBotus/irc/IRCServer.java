@@ -42,10 +42,18 @@ public class IRCServer {
 	}
 
 	/**
-	 * Get the set of saved channels for this server
+	 * Get the set of names for the saved channels for this server
 	 * @return Set of saved channels
 	 */
-	public Collection<IRCChannel> getChannels() {
+	public Set<String> getChannelNames() {
+		return Collections.unmodifiableSet(channels.keySet());
+	}
+	
+	/**
+	 * Get the IRCChannel objects for the saved channels for this server
+	 * @return
+	 */
+	public Collection<IRCChannel> getChannels(){
 		return Collections.unmodifiableCollection(channels.values());
 	}
 
@@ -56,6 +64,10 @@ public class IRCServer {
 	 */
 	public IRCChannel getChannel(String channelName){
 		return channels.get(channelName);
+	}
+	
+	public boolean isConnectedTo(String channelName){
+		return channels.containsKey(channelName);
 	}
 
 	/**
