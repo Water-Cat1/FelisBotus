@@ -152,6 +152,7 @@ public class BotCommandHelper {
 				if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
 					parentBot.partChannel(splitMessage[1], "Remote channel leave request");
 					parentBot.getIRCServer().removeChannel(splitMessage[1]);
+					parentBot.sendNotice(sender, "Successfully left " + splitMessage[1]);
 				}
 				else{
 					parentBot.sendNotice(sender, "I am not connected to this channel");
@@ -231,9 +232,11 @@ public class BotCommandHelper {
 			}
 			else if (splitMessage.length == 2){
 				parentBot.joinIRCChannel(splitMessage[1]);
+				parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
 			}
 			else if (splitMessage.length == 3){ //password supplied
 				parentBot.joinIRCChannel(splitMessage[1], splitMessage[2]);
+				parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
 			}
 		}else{
 			parentBot.sendNotice(sender, "You must be an OP to use this command");
