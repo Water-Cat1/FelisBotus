@@ -127,7 +127,7 @@ public class FelisBotus extends PircBot {
 				}
 			}
 			Main.save();
-		} catch (IOException e){//TODO how to manage exceptions? return to console/
+		} catch (IOException e){//TODO how to manage exceptions? return to console?
 			//
 		} catch (IrcException e) {
 			// TODO Auto-generated catch block
@@ -260,6 +260,16 @@ public class FelisBotus extends PircBot {
 			commandHelper.runBotCommand(this, channel, sender, message, lowercaseCommand);
 		}
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onPrivateMessage(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onPrivateMessage(String sender, String login,
+			String hostname, String message) {
+		String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0].substring(FelisBotus.commandStart.length());
+		commandHelper.runBotCommand(this, sender, sender, message, lowercaseCommand); //considers user the channel to send response back to.
 	}
 
 	/* (non-Javadoc)

@@ -241,7 +241,7 @@ public class BotCommandHelper {
 
 	}
 	
-	private void getChannels(String channel, String sender){
+	private void getChannels(String channel, String sender){ //TODO support for entering another server to check if its connected and what channels there?
 		String[] channelNames = (String[]) parentBot.getIRCServer().getChannelNames().toArray(new String[0]);
 		parentBot.sendMessage(channel, "Channels in this server I am currently connected to are:");
 		parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
