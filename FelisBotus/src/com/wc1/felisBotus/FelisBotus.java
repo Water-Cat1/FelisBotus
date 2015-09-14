@@ -342,20 +342,20 @@ public class FelisBotus extends PircBot {
 	protected void onUserList(String channel, User[] users) {
 		IRCChannel currChannel = server.getChannel(channel);
 		Set<String> opList = currChannel.getOpList();
-		List<String> addedToList = new ArrayList<String>();
+		boolean opAdded = false;
 		for (int i = 0; i < users.length; i++) {
 			User user = users[i];
 			String nick = user.getNick();
 			if (!opList.contains(nick)){
 				if(user.isOp() && nick != this.getNick()){//user is op'd but is not on bots op list, so add them to the list
 					currChannel.addOp(nick);
-					addedToList.add(nick);
+					opAdded = true;
 				}
 			}
 		}
 		StringBuilder output = new StringBuilder("Bot initialized.");
-		if (addedToList.size() > 0){
-			output.append(" Added " + String.join(", ", addedToList.toArray(new String[addedToList.size()])) + " to this bots known Ops");
+		if (opAdded){
+			output.append(" Updated this bots known Ops");
 		}
 		try {
 			if(Main.save())sendMessage(channel, output.toString());
