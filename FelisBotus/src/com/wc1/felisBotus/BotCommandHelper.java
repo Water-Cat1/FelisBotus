@@ -2,8 +2,13 @@ package com.wc1.felisBotus;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Random;
 
 import com.wc1.felisBotus.irc.IRCChannel;
+import com.wc1.felisBotus.streamAPIs.Beam.Beam_API;
+import com.wc1.felisBotus.streamAPIs.Beam.Beam_Stream;
+import com.wc1.felisBotus.streamAPIs.HitBox.HitBox_API;
+import com.wc1.felisBotus.streamAPIs.HitBox.HitBox_Stream;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
@@ -52,8 +57,22 @@ public class BotCommandHelper {
 			shutdownBot(sender, message, isOp);
 			break;
 		case("twitch"):
-			twitch(channel, message);
+			twitch(channel, sender, message);
 			break;
+		case("hitbox"):
+			hitbox(channel, sender, message);
+		break;
+		case("beam"):
+			beam(channel, sender, message);
+		break;
+		case("commands"):
+			//TODO parse command
+
+		break;
+
+		case("roll"):
+			dice(channel, sender);
+		break;
 		case("listchannels"):
 			getChannels(channel, message, sender);
 			break;
@@ -68,23 +87,68 @@ public class BotCommandHelper {
 	
 		}
 	}
+
+	private void dice(String channel, String sender) {
+		Random rand = new Random();
+		int dice1 = rand.nextInt(6);
+		int dice2 = rand.nextInt(6);
+		parentBot.sendMessage(channel, sender+" Rolls a "+dice1+"+"+dice2+"="+(dice1+dice2));
+	}
+
+	private void beam(String channel, String sender, String message) {
+		String[] splitMessage = message.split(" ");
+		if (splitMessage.length == 2){
+			String userName = splitMessage[1];
+			Beam_Stream bStream = Beam_API.getStream(userName);
+
+			String bStatus = String.format(bStream.getUser()+" is Live! | Title: "+bStream.getTitle()+" | Game: "+bStream.getGame()+" | Url: "+bStream.getUrl());
+			if (bStream.getIsOnline()){
+				parentBot.sendMessage(channel, bStatus);
+			}else
+			{
+				parentBot.sendMessage(channel,"Stream is Currently Offline");
+			}
+		}else
+		{
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart + "beam <channel>");
+		}
+	}
+
+	private void hitbox(String channel, String sender, String message) {
+		String[] splitMessage = message.split(" ");
+		if (splitMessage.length == 2){
+			String userName = splitMessage[1];
+			HitBox_Stream hStream = HitBox_API.getStream(userName);
+
+			String hStatus = String.format(hStream.getUser()+" is Live! | Title: "+hStream.getTitle()+" | Game: "+hStream.getGame()+" | Url: "+hStream.getUrl());
+			if (hStream.getIsOnline()){
+				parentBot.sendMessage(channel, hStatus);
+			}else
+			{
+				parentBot.sendMessage(channel,"Stream is Currently Offline");
+			}
+		}else
+		{
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart + "hitbox <channel>");
+		}
+	}
 	
 
-	private void twitch(String channel, String message) {
+	private void twitch(String channel, String sender, String message) {
 		String[] splitMessage;
 		splitMessage = message.split(" ");
 		if (splitMessage.length == 2){
-		String userName = splitMessage[1];
-		Twitch_Stream stream = Twitch_API.getStream(userName);
-		String status = String.format("%s is live! | Game = %s | Title = %s | URL = %s", userName.toUpperCase(), stream.getGame(), stream.getStatus(), stream.getUrl());
-		if (stream.isOnline()){
-			parentBot.sendMessage(channel, status);
-		}else
-		{
-			parentBot.sendMessage(channel,"Stream is Currently Offline");
-		}
+			String userName = splitMessage[1];
+			Twitch_Stream stream = Twitch_API.getStream(userName);
+			String status = String.format("%s is live! | Game = %s | Title = %s | URL = %s", userName.toUpperCase(), stream.getGame(), stream.getStatus(), stream.getUrl());
+			if (stream.isOnline()){
+				parentBot.sendMessage(channel, status);
+			}else
+			{
+				parentBot.sendMessage(channel,"Stream is Currently Offline");
+			}
 		} else {
-			
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart + "twitch <channel>");
 		}
 	}
 
