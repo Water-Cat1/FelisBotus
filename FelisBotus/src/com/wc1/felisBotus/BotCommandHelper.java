@@ -157,8 +157,7 @@ public class BotCommandHelper {
 				parentBot.partChannel(channel, "Requested to leave channel");
 				parentBot.getIRCServer().removeChannel(channel);
 				if (parentBot.getIRCServer().getChannels().size() == 0){ //not connected to any channels, disconnect from the server
-					parentBot.setShuttingdown();
-					parentBot.disconnect();
+					Main.removeBot(parentBot);
 				}
 			}
 			else{

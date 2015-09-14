@@ -28,6 +28,7 @@ public class Main {
 	private static List<String> streamersTwitch;
 	private static boolean noSave = false;
 	private static boolean devEnviro = false; //if system.console() returns null then set this true
+	private static BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
 
 	/**
 	 * Location of the config file
@@ -188,18 +189,15 @@ public class Main {
 
 	}
 
+	
 	//TODO create a new bot on command
 	//TODO remove a bot on command
 
 	public static String readConsole(String query){
 		if (devEnviro){
 			System.out.printf("%s\n", query);
-			InputStreamReader inStream = new InputStreamReader(System.in);
-			BufferedReader inReader = new BufferedReader(inStream);
 			try {
 				String result = inReader.readLine();
-				inReader.close();
-				inStream.close();
 				return result;
 				} catch (IOException e) {
 					System.out.printf("Error attempting to read console\n");
@@ -213,12 +211,8 @@ public class Main {
 	public static String readConsolePass(String query){
 		if (devEnviro){
 			System.out.printf("%s\n", query);
-			InputStreamReader inStream = new InputStreamReader(System.in);
-			BufferedReader inReader = new BufferedReader(inStream);
 			try {
 				String result = inReader.readLine();
-				inReader.close();
-				inStream.close();
 				return result;
 				} catch (IOException e) {
 					System.out.printf("Error attempting to read console\n");

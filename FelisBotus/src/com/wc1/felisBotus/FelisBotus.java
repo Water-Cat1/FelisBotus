@@ -184,22 +184,23 @@ public class FelisBotus extends PircBot {
 		return voiceUsers;
 	}
 
-	public void onDisconnect() {
-		if (shuttingdown){
-			Main.removeBot(this);
-		}
-		else{
+	public void onDisconnect() { //TODO 
+		if (!shuttingdown){
 			int retryCount = 0;
 			while (!isConnected()) {
 				try {
 					reconnect();
-					//ghost old bot?
+					//ghost old bot? onConnect?
 				} catch (Exception e) {
 					retryCount++;
-					if (retryCount > 5){
+					if (retryCount > 6){
 						shuttingdown = true;
-						Main.removeBot(this);
-						break;
+						return;
+					}
+					try {
+						Thread.sleep(5000); //retry connection in 5 seconds
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
