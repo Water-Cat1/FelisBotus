@@ -20,7 +20,7 @@ public class BotCommandHelper {
 		if (channel.equalsIgnoreCase(sender)){ //private message!
 			for (IRCChannel currChannel:parentBot.getIRCServer().getChannels()){
 				if (currChannel.checkOp(sender)){
-					isOp = true;
+					isOp = true; //if future security requires it, save what channel they are oped on too.
 					break;
 				}
 			}
@@ -55,7 +55,7 @@ public class BotCommandHelper {
 			twitch(channel, message);
 			break;
 		case("listchannels"):
-			getChannels(channel, sender);
+			getChannels(channel, message, sender);
 			break;
 		default:
 			String response = Main.getResponse(lowercaseCommand);
@@ -236,10 +236,26 @@ public class BotCommandHelper {
 	//private void joinChannel(String sender, String message, boolean isOp) {
 	//}
 	
-	private void getChannels(String channel, String sender){ //TODO support for entering another server to check if its connected and what channels there?
-		String[] channelNames = (String[]) parentBot.getIRCServer().getChannelNames().toArray(new String[0]);
-		parentBot.sendMessage(channel, "Channels in this server I am currently connected to are:");
-		parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
+	private void getChannels(String channel, String message, String sender){ //TODO support for entering another server to check if its connected and what channels there?
+		String[] splitMessage = message.split(" ");
+		if (splitMessage.length == 2 || (splitMessage.length == 3 && splitMessage[2].equalsIgnoreCase(parentBot.getServer()))){ //get the channels of the current server
+			String[] channelNames = parentBot.getChannels();
+			parentBot.sendMessage(channel, "Channels in this server I am currently connected to are:");
+			parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
+		}
+		else if (splitMessage.length == 3){
+			String[] channelNames = Main.getConnectedChannelsOnServer(splitMessage[2]);
+			if (channelNames != null){
+				parentBot.sendMessage(channel, "Channels on " + splitMessage[2] + " I am currently connected to are:");
+				parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
+			} else{
+				parentBot.sendMessage(channel, "I am not connected to " + splitMessage[2]);
+			}
+		} else{
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"listchannels [server]");
+		}
+		
+		
 	}
 
 	private class JoinChannel implements Runnable{

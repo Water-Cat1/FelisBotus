@@ -166,6 +166,15 @@ public class Main {
 
 	}
 
+	public static String[] getConnectedChannelsOnServer(String server){
+		FelisBotus bot = getBotConnectedTo(server);
+		if (bot != null){
+			return bot.getChannels();
+		} else{
+			return null;
+		}
+	}
+	
 	public static void shutItDown(boolean force) throws IOException{
 		try {
 			Main.save();
