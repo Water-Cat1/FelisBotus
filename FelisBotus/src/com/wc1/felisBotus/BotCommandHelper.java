@@ -231,12 +231,18 @@ public class BotCommandHelper {
 				parentBot.sendNotice(sender, "This bot is already connected to that channel");
 			}
 			else if (splitMessage.length == 2){
-				parentBot.joinIRCChannel(splitMessage[1]);
-				parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+				if(parentBot.joinIRCChannel(splitMessage[1])){
+					parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+				} else{
+					parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct and that there is no password required.");
+				}
 			}
 			else if (splitMessage.length == 3){ //password supplied
-				parentBot.joinIRCChannel(splitMessage[1], splitMessage[2]);
-				parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+				if (parentBot.joinIRCChannel(splitMessage[1], splitMessage[2])){
+					parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+				} else{
+					parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct.");
+				}
 			}
 		}else{
 			parentBot.sendNotice(sender, "You must be an OP to use this command");
