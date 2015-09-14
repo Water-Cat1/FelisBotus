@@ -3,6 +3,7 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.streamAPIs.beam.Beam_API;
@@ -71,7 +72,7 @@ public class BotCommandHelper {
 		break;
 
 		case("roll"):
-			dice(channel, sender);
+			dice(channel, sender, message);
 		break;
 		case("listchannels"):
 			getChannels(channel, message, sender);
@@ -88,11 +89,25 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void dice(String channel, String sender) {
-		Random rand = new Random();
-		int dice1 = rand.nextInt(6);
-		int dice2 = rand.nextInt(6);
-		parentBot.sendMessage(channel, sender+" Rolls a "+dice1+"+"+dice2+"="+(dice1+dice2));
+	private void dice(String channel, String sender, String message) {
+		String[] splitMessage = message.split(" ");
+		if (!Pattern.matches("roll( \\d+( \\d+)?)?", message)){ //matches "roll[ num[ num]]"
+			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart + "roll [numOfdice] [numOfSides]."
+					+ " If no numbers are given, two 6-sided dice are rolled. If only number of dice is given then 6-sided dice will be rolled");
+		}
+		else{
+			Random rand = new Random();
+			int numDice = splitMessage.length >=2 ? Integer.parseInt(splitMessage[1]) : 2;
+			int numSides = splitMessage.length == 3 ? Integer.parseInt(splitMessage[2]) : 6;
+			String[] rolls = new String[numDice];
+			int total = 0;
+			for (int i=0; i<numDice; i++){
+				int currRoll = rand.nextInt(numSides) + 1; //nextint is 0 (inclusive) to bound (exclusive)
+				rolls[i] = String.valueOf(currRoll);
+				total += currRoll;
+			}
+			parentBot.sendMessage(channel, String.format("%s rolled a %d (Individual rolls: %s)", sender, total, String.join(", ", rolls)));
+		}
 	}
 
 	private void beam(String channel, String sender, String message) {
