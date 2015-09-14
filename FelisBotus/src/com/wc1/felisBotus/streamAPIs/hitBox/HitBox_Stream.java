@@ -1,4 +1,4 @@
-package com.wc1.felisBotus.streamAPIs.HitBox;
+package com.wc1.felisBotus.streamAPIs.hitBox;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

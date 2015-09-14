@@ -1,4 +1,4 @@
-package com.wc1.felisBotus.streamAPIs.Beam;
+package com.wc1.felisBotus.streamAPIs.beam;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
