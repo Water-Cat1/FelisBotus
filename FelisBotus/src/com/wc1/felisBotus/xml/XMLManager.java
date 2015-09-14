@@ -130,7 +130,7 @@ public class XMLManager {
 			Set<IRCChannel> channels = new HashSet<IRCChannel>();
 			for (Element elemCurrChannel:elemChannels.getChildren("Channel")){
 				String currChannelName = "#" + elemCurrChannel.getAttributeValue("Name");
-				String currChannelPass = elemCurrChannel.getAttribute("Pass").toString();
+				String currChannelPass = elemCurrChannel.getAttributeValue("Pass");
 				Element elemOps = elemCurrChannel.getChild("Ops");
 				Set<String> ops = new HashSet<String>();
 				for (Element elemCurrOp:elemOps.getChildren()){
