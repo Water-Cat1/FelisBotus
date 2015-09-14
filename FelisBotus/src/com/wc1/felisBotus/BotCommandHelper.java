@@ -3,6 +3,7 @@ package com.wc1.felisBotus;
 import java.io.IOException;
 import java.util.Locale;
 
+import com.wc1.felisBotus.irc.IRCChannel;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
@@ -15,7 +16,17 @@ public class BotCommandHelper {
 	}
 	
 	public void runBotCommand(FelisBotus felisBotus, String channel, String sender, String message, String lowercaseCommand) {
-		boolean isOp = parentBot.getIRCServer().getChannel(channel).checkOP(sender);
+		boolean isOp = false;
+		if (channel.equalsIgnoreCase(sender)){ //private message!
+			for (IRCChannel currChannel:parentBot.getIRCServer().getChannels()){
+				if (currChannel.checkOp(sender)){
+					isOp = true;
+					break;
+				}
+			}
+		} else{
+			isOp = parentBot.getIRCServer().getChannel(channel).checkOp(sender);
+		}
 		switch(lowercaseCommand){ //substring removes the command section of the string
 		case("addcommand"):
 			addCommand(sender, message, isOp);
@@ -47,12 +58,12 @@ public class BotCommandHelper {
 			getChannels(channel, sender);
 			break;
 		default:
-			String response = Main.getResponse(lowercaseCommand.substring(FelisBotus.commandStart.length()));
+			String response = Main.getResponse(lowercaseCommand);
 			if (response != null){
 				felisBotus.sendMessage(channel, response);
 			}
 			else{
-				felisBotus.sendNotice(sender, "Invalid command, please ensure it is spelled correctly");
+				felisBotus.sendNotice(sender, lowercaseCommand + " is an invalid command, please ensure it is spelled correctly");
 			}
 	
 		}

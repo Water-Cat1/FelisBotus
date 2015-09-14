@@ -10,8 +10,6 @@
 package com.wc1.felisBotus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -224,7 +222,7 @@ public class FelisBotus extends PircBot {
 			String hostname) {
 		if (sender != this.getNick()) {
 			IRCChannel currChannel = server.getChannel(channel);
-			if (currChannel.getBotIsOp() && currChannel.checkOP(sender)){
+			if (currChannel.getBotIsOp() && currChannel.checkOp(sender)){
 				op(channel, sender);
 			}
 			if (sender.equals(owner)){
@@ -267,7 +265,10 @@ public class FelisBotus extends PircBot {
 	@Override
 	protected void onPrivateMessage(String sender, String login,
 			String hostname, String message) {
-		String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0].substring(FelisBotus.commandStart.length());
+		String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0];
+		if (lowercaseCommand.startsWith(commandStart)){
+			lowercaseCommand = lowercaseCommand.substring(commandStart.length()); //supports inclusion or not of the command character on private message.
+		}
 		commandHelper.runBotCommand(this, sender, sender, message, lowercaseCommand); //considers user the channel to send response back to.
 	}
 

@@ -89,7 +89,7 @@ public class IRCChannel {
 		return ops.remove(name);
 	}
 	
-	public boolean checkOP(String name){
+	public boolean checkOp(String name){
 		return ops.contains(name);
 	}
 
