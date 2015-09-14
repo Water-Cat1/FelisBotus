@@ -5,10 +5,10 @@ import java.util.Locale;
 import java.util.Random;
 
 import com.wc1.felisBotus.irc.IRCChannel;
-import com.wc1.felisBotus.streamAPIs.Beam.Beam_API;
-import com.wc1.felisBotus.streamAPIs.Beam.Beam_Stream;
-import com.wc1.felisBotus.streamAPIs.HitBox.HitBox_API;
-import com.wc1.felisBotus.streamAPIs.HitBox.HitBox_Stream;
+import com.wc1.felisBotus.streamAPIs.beam.Beam_API;
+import com.wc1.felisBotus.streamAPIs.beam.Beam_Stream;
+import com.wc1.felisBotus.streamAPIs.hitBox.HitBox_API;
+import com.wc1.felisBotus.streamAPIs.hitBox.HitBox_Stream;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_API;
 import com.wc1.felisBotus.streamAPIs.twitch.Twitch_Stream;
 
