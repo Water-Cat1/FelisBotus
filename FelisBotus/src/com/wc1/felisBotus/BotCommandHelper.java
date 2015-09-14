@@ -30,7 +30,9 @@ public class BotCommandHelper {
 			leaveServer(sender, message, isOp);
 			break;
 		case("joinchannel"):
-			joinChannel(sender, message, isOp);
+			Thread thread = new Thread(new JoinChannel(sender, message, isOp));
+			thread.start();
+			//joinChannel(sender, message, isOp);
 			break;
 		case("joinserver"):
 			//TODO
@@ -220,35 +222,8 @@ public class BotCommandHelper {
 		}
 	}
 
-	private void joinChannel(String sender, String message, boolean isOp) {
-		if (isOp){
-			String[] splitMessage = message.split(" ");
-			if ((splitMessage.length == 2 && !splitMessage[1].startsWith("#")) || splitMessage.length > 3 || splitMessage.length < 2){
-				parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"joinchannel <channel> [pass]. "
-						+ "Channel must be prefixed by a #.");
-			}
-			else if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
-				parentBot.sendNotice(sender, "This bot is already connected to that channel");
-			}
-			else if (splitMessage.length == 2){
-				if(parentBot.joinIRCChannel(splitMessage[1])){
-					parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
-				} else{
-					parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct and that there is no password required.");
-				}
-			}
-			else if (splitMessage.length == 3){ //password supplied
-				if (parentBot.joinIRCChannel(splitMessage[1], splitMessage[2])){
-					parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
-				} else{
-					parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct.");
-				}
-			}
-		}else{
-			parentBot.sendNotice(sender, "You must be an OP to use this command");
-		}
-
-	}
+	//private void joinChannel(String sender, String message, boolean isOp) {
+	//}
 	
 	private void getChannels(String channel, String sender){ //TODO support for entering another server to check if its connected and what channels there?
 		String[] channelNames = (String[]) parentBot.getIRCServer().getChannelNames().toArray(new String[0]);
@@ -256,6 +231,48 @@ public class BotCommandHelper {
 		parentBot.sendMessage(channel, String.join(", ", channelNames) + ".");
 	}
 
-	
+	private class JoinChannel implements Runnable{
+
+		private String sender;
+		private String message;
+		private boolean isOp;
+		
+		public JoinChannel(String sender, String message, boolean isOp) {
+			this.sender = sender;
+			this.message = message;
+			this.isOp = isOp;
+		}
+		
+		@Override
+		public void run() {
+			if (isOp){
+				String[] splitMessage = message.split(" ");
+				if ((splitMessage.length == 2 && !splitMessage[1].startsWith("#")) || splitMessage.length > 3 || splitMessage.length < 2){
+					parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart +"joinchannel <channel> [pass]. "
+							+ "Channel must be prefixed by a #.");
+				}
+				else if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
+					parentBot.sendNotice(sender, "This bot is already connected to that channel");
+				}
+				else if (splitMessage.length == 2){
+					if(parentBot.joinIRCChannel(splitMessage[1])){
+						parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+					} else{
+						parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct and that there is no password required.");
+					}
+				}
+				else if (splitMessage.length == 3){ //password supplied
+					if (parentBot.joinIRCChannel(splitMessage[1], splitMessage[2])){
+						parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+					} else{
+						parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct.");
+					}
+				}
+			}else{
+				parentBot.sendNotice(sender, "You must be an OP to use this command");
+			}
+		}
+		
+	}
 
 }

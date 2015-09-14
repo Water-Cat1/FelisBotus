@@ -222,7 +222,6 @@ public class FelisBotus extends PircBot {
 	@Override
 	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
-
 		if (sender != this.getNick()) {
 			IRCChannel currChannel = server.getChannel(channel);
 			if (currChannel.getBotIsOp() && currChannel.checkOP(sender)){
@@ -376,20 +375,24 @@ public class FelisBotus extends PircBot {
 	 */
 	public boolean joinIRCChannel(String channel){
 		joinChannel(channel);
+		server.addChannel(new IRCChannel(channel)); //this is added anyway as onjoin and other methods need this to exist.
 		int numAttempts = 0;
 		while (true){
 			for(String currChannel:getChannels()){
 				if (currChannel.equalsIgnoreCase(channel)){
-					server.addChannel(new IRCChannel(channel));
 					return true;
 				}
-				numAttempts++;
-				if (numAttempts > 5) return false;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				
+			}
+			numAttempts++;
+			if (numAttempts > 10){
+				server.removeChannel(channel);
+				return false;
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -401,20 +404,24 @@ public class FelisBotus extends PircBot {
 	 */
 	public boolean joinIRCChannel(String channel, String pass){
 		joinChannel(channel, pass);
+		server.addChannel(new IRCChannel(channel, pass));
 		int numAttempts = 0;
 		while (true){
 			for(String currChannel:getChannels()){
 				if (currChannel.equalsIgnoreCase(channel)){
-					server.addChannel(new IRCChannel(channel, pass));
 					return true;
 				}
-				numAttempts++;
-				if (numAttempts > 5) return false;
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				
+			}
+			numAttempts++;
+			if (numAttempts > 10){
+				server.removeChannel(channel);
+				return false;
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
