@@ -91,7 +91,7 @@ public class BotCommandHelper {
 
 	private void dice(String channel, String sender, String message) {
 		String[] splitMessage = message.split(" ");
-		if (!Pattern.matches("roll( \\d+( \\d+)?)?", message)){ //matches "roll[ num[ num]]"
+		if (!Pattern.matches("roll(\\s\\d+(\\s\\d+)?)?\\s*", message.substring(FelisBotus.commandStart.length()))){ //matches "roll[ num[ num]]"
 			parentBot.sendNotice(sender, "Syntax Error. Correct usage is " + FelisBotus.commandStart + "roll [numOfdice] [numOfSides]."
 					+ " If no numbers are given, two 6-sided dice are rolled. If only number of dice is given then 6-sided dice will be rolled");
 		}
@@ -310,9 +310,6 @@ public class BotCommandHelper {
 			parentBot.sendNotice(sender, "You must be an OP to use this command");
 		}
 	}
-
-	//private void joinChannel(String sender, String message, boolean isOp) {
-	//}
 	
 	private void getChannels(String channel, String message, String sender){ //TODO support for entering another server to check if its connected and what channels there?
 		String[] splitMessage = message.split(" ");
