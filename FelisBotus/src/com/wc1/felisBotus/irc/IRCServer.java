@@ -45,7 +45,7 @@ public class IRCServer {
 	 * Get the set of names for the saved channels for this server
 	 * @return Set of saved channels
 	 */
-	public Set<String> getChannelNames() {
+	public synchronized Set<String> getChannelNames() {
 		return Collections.unmodifiableSet(channels.keySet());
 	}
 	
@@ -53,7 +53,7 @@ public class IRCServer {
 	 * Get the IRCChannel objects for the saved channels for this server
 	 * @return
 	 */
-	public Collection<IRCChannel> getChannels(){
+	public synchronized Collection<IRCChannel> getChannels(){
 		return Collections.unmodifiableCollection(channels.values());
 	}
 
@@ -62,11 +62,11 @@ public class IRCServer {
 	 * @param channelName Name of channel to get object for
 	 * @return IRCChannel object
 	 */
-	public IRCChannel getChannel(String channelName){
+	public synchronized IRCChannel getChannel(String channelName){
 		return channels.get(channelName);
 	}
 	
-	public boolean isConnectedTo(String channelName){
+	public synchronized boolean isConnectedTo(String channelName){
 		return channels.containsKey(channelName);
 	}
 
@@ -83,7 +83,7 @@ public class IRCServer {
 	 * @param newChannel Channel to save
 	 * @return Old channel if one is already saved, null otherwise.
 	 */
-	public IRCChannel addChannel(IRCChannel newChannel){
+	public synchronized IRCChannel addChannel(IRCChannel newChannel){
 		return channels.put(newChannel.getName(), newChannel);
 	}
 
@@ -92,7 +92,7 @@ public class IRCServer {
 	 * @param oldChannel Channel to remove
 	 * @return IRCChannel that was removed
 	 */
-	public IRCChannel removeChannel(String oldChannel){
+	public synchronized IRCChannel removeChannel(String oldChannel){
 		return channels.remove(oldChannel);
 	}
 
