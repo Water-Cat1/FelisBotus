@@ -1,9 +1,9 @@
-package com.q3.qubert.xml;
+package com.q3.qubedBot.xml;
 
 import java.util.List;
 import java.util.Map;
 
-import com.q3.qubert.ServBot;
+import com.q3.qubedBot.ServBot;
 
 /**
  * Class for storing data returned from reading the XML config file

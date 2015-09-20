@@ -7,7 +7,7 @@
  *
  *
  */
-package com.q3.qubert;
+package com.q3.qubedBot;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -17,8 +17,8 @@ import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 
-import com.q3.qubert.irc.IRCChannel;
-import com.q3.qubert.irc.IRCServer;
+import com.q3.qubedBot.irc.IRCChannel;
+import com.q3.qubedBot.irc.IRCServer;
 
 /**
  * Bot for the program. Each instance can only connect to one server, so several instances will need to be created to connect to several servers.
@@ -43,7 +43,7 @@ public class ServBot extends PircBot {
 	/**Version of the bot*/
 	public static final String version = "C3 Java IRC Bot - V0.5.W";
 	/**String that this bot will recognize as a command to it*/
-	public static final String commandStart = "\\";
+	public static final String commandStart = "!";
 
 	/**
 	 * Constructor for when bot without server information (can be added later through other methods) Used mainly for first time creation

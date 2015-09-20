@@ -1,4 +1,4 @@
-package com.q3.qubert.streamAPIs.hitBox;
+package com.q3.qubedBot.streamAPIs.hitBox;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

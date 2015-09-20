@@ -1,4 +1,4 @@
-package com.q3.qubert;
+package com.q3.qubedBot;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,8 +11,8 @@ import java.util.TreeMap;
 
 import org.jdom2.JDOMException;
 
-import com.q3.qubert.xml.SaveData;
-import com.q3.qubert.xml.XMLManager;
+import com.q3.qubedBot.xml.SaveData;
+import com.q3.qubedBot.xml.XMLManager;
 
 /**
  * Main class for running bots. Handles the list of bots as a single bot can only connect to one server. 

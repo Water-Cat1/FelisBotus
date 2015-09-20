@@ -1,4 +1,4 @@
-package com.q3.qubert.streamAPIs.twitch;
+package com.q3.qubedBot.streamAPIs.twitch;
 
 import com.google.gson.JsonObject;
 /**

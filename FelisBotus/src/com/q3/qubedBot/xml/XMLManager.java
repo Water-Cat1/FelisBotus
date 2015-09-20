@@ -1,4 +1,4 @@
-package com.q3.qubert.xml;
+package com.q3.qubedBot.xml;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,10 +17,10 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import com.q3.qubert.Main;
-import com.q3.qubert.ServBot;
-import com.q3.qubert.irc.IRCChannel;
-import com.q3.qubert.irc.IRCServer;
+import com.q3.qubedBot.Main;
+import com.q3.qubedBot.ServBot;
+import com.q3.qubedBot.irc.IRCChannel;
+import com.q3.qubedBot.irc.IRCServer;
 
 /**
  * Class for managing the input and output of XML files for the bot.

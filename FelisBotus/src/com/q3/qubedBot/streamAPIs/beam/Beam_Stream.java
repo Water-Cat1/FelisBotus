@@ -1,4 +1,4 @@
-package com.q3.qubert.streamAPIs.beam;
+package com.q3.qubedBot.streamAPIs.beam;
 
 import com.google.gson.JsonObject;
 

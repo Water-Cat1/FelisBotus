@@ -1,7 +1,7 @@
-package com.q3.qubert.streamAPIs.twitch;
+package com.q3.qubedBot.streamAPIs.twitch;
 
 import com.google.gson.JsonObject;
-import com.q3.qubert.streamAPIs.JsonHelper;
+import com.q3.qubedBot.streamAPIs.JsonHelper;
 /**
  * <pre>
  * Api Class used for getting a Json response from Twitch.tv using their API.

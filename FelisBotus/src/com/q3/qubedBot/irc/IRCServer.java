@@ -1,4 +1,4 @@
-package com.q3.qubert.irc;
+package com.q3.qubedBot.irc;
 
 import java.util.Collection;
 import java.util.Collections;

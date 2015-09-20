@@ -1,18 +1,18 @@
-package com.q3.qubert;
+package com.q3.qubedBot;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import com.q3.qubert.irc.IRCChannel;
-import com.q3.qubert.irc.IRCServer;
-import com.q3.qubert.streamAPIs.beam.Beam_API;
-import com.q3.qubert.streamAPIs.beam.Beam_Stream;
-import com.q3.qubert.streamAPIs.hitBox.HitBox_API;
-import com.q3.qubert.streamAPIs.hitBox.HitBox_Stream;
-import com.q3.qubert.streamAPIs.twitch.Twitch_API;
-import com.q3.qubert.streamAPIs.twitch.Twitch_Stream;
+import com.q3.qubedBot.irc.IRCChannel;
+import com.q3.qubedBot.irc.IRCServer;
+import com.q3.qubedBot.streamAPIs.beam.Beam_API;
+import com.q3.qubedBot.streamAPIs.beam.Beam_Stream;
+import com.q3.qubedBot.streamAPIs.hitBox.HitBox_API;
+import com.q3.qubedBot.streamAPIs.hitBox.HitBox_Stream;
+import com.q3.qubedBot.streamAPIs.twitch.Twitch_API;
+import com.q3.qubedBot.streamAPIs.twitch.Twitch_Stream;
 
 public class BotCommandHelper {
 

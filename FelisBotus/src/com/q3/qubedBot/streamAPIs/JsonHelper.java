@@ -1,4 +1,4 @@
-package com.q3.qubert.streamAPIs;
+package com.q3.qubedBot.streamAPIs;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
