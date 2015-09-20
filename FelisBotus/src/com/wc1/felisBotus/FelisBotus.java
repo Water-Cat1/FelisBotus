@@ -221,8 +221,8 @@ public class FelisBotus extends PircBot {
 	@Override
 	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
+		IRCChannel currChannel = server.getChannel(channel);
 		if (sender != this.getNick()) {
-			IRCChannel currChannel = server.getChannel(channel);
 			if (currChannel.getBotIsOp() && currChannel.checkOp(sender)){
 				op(channel, sender);
 			}
@@ -234,7 +234,7 @@ public class FelisBotus extends PircBot {
 				//		+ " Welcome to the Qubed C3 IRC Channel!");
 			}
 		}
-		if (isVoiceUsers()) {
+		if (currChannel.getBotIsOp() && isVoiceUsers()) {
 			this.voice(channel, sender);
 		}
 
