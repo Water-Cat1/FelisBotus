@@ -52,7 +52,7 @@ public class XMLManager {
 				elemCurrBot.setAttribute("Owner", currBot.getOwner());
 				elemCurrBot.setAttribute("Login", currBot.getLogin());
 				String loginPass = currBot.getLoginPass();
-				if (loginPass != null) elemCurrBot.setAttribute("LoginPass", loginPass);
+				if (currBot.isPassSaved()) elemCurrBot.setAttribute("LoginPass", loginPass);
 				//save single server associated with this bot
 				IRCServer currServer = currBot.getIRCServer(); 
 				Element elemCurrServer = new Element("Server");//<Server Address="">

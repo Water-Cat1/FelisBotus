@@ -13,7 +13,7 @@ import java.util.TreeMap;
  */
 public class IRCServer {
 
-	private Map<String, IRCChannel> channels;
+	private Map<String, IRCChannel> channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
 	private String serverAddress;
 	private int serverPort = 6667;
 
@@ -46,7 +46,6 @@ public class IRCServer {
 		if (splitAddress.length>1){
 			this.serverPort = Integer.parseInt(splitAddress[1]);
 		}
-		this.channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
 	}
 
 	/**

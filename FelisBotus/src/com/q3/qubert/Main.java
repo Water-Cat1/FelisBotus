@@ -28,6 +28,7 @@ public class Main {
 	private static List<String> streamersTwitch;
 	private static boolean noSave = false;
 	private static boolean devEnviro = false; //if system.console() returns null then set this true
+	private static boolean debugMode = false;
 	private static BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
 
 	/**
@@ -80,6 +81,7 @@ public class Main {
 		// Enable debugging output.
 		for (int i = 0; i < args.length; i++){
 			if (args[i].equalsIgnoreCase("-debug")){
+				debugMode = true;
 				for (ServBot bot:bots)bot.setVerbose(true);
 				break;
 			}
@@ -115,7 +117,7 @@ public class Main {
 	 * @return Returns true if save successful and false otherwise.
 	 * @throws IOException
 	 */
-	public static boolean save() throws IOException{
+	public synchronized static boolean save() throws IOException{
 		if (noSave) return false;
 		XMLManager.compileConfigFile(bots, commands, streamersTwitch);
 		return true;
@@ -128,7 +130,7 @@ public class Main {
 	 * @param command Command to find a response for
 	 * @return Response to command or null if command does not exist in Map
 	 */
-	public static String getResponse(String command){
+	public synchronized static String getResponse(String command){
 		return commands.get(command);
 	}
 
@@ -138,15 +140,15 @@ public class Main {
 	 * @param response Response that bot sends out to others
 	 * @return old response if command already exists, null otherwise.
 	 */
-	public static String putCommand(String command, String response){
+	public synchronized static String putCommand(String command, String response){
 		return commands.put(command, response);
 	}
 
-	public static String removeCommand(String command){
+	public synchronized static String removeCommand(String command){
 		return commands.remove(command);
 	}
 
-	public static void removeBot(ServBot bot) {
+	public synchronized static void removeBot(ServBot bot) {
 		bot.shutDown();
 		bots.remove(bot);
 		try {
@@ -156,8 +158,19 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
+	
+	public synchronized static boolean addBot(ServBot bot){
+		bot.setVerbose(debugMode);
+		boolean result =  bot.connectCommand();
+		if (result){
+			bots.add(bot);
+			return result;
+		} else{
+			return result;
+		}
+	}
 
-	public static ServBot getBotConnectedTo(String string) {
+	public synchronized static ServBot getBotConnectedTo(String string) {
 		for (ServBot currBot:bots){
 			if (currBot.getServer().equalsIgnoreCase(string)){
 				return currBot;
@@ -167,7 +180,7 @@ public class Main {
 
 	}
 
-	public static String[] getConnectedChannelsOnServer(String server){
+	public synchronized static String[] getConnectedChannelsOnServer(String server){
 		ServBot bot = getBotConnectedTo(server);
 		if (bot != null){
 			return bot.getChannels();
@@ -176,7 +189,7 @@ public class Main {
 		}
 	}
 	
-	public static void shutItDown(boolean force) throws IOException{
+	public synchronized static void shutItDown(boolean force) throws IOException{
 		try {
 			Main.save();
 		} catch (IOException e) {
@@ -188,7 +201,6 @@ public class Main {
 		System.exit(0);
 
 	}
-	//TODO create a new bot on command
 
 	public static String readConsole(String query){
 		if (devEnviro){

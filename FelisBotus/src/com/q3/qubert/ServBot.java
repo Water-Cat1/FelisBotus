@@ -38,6 +38,7 @@ public class ServBot extends PircBot {
 	private BotCommandHelper commandHelper = new BotCommandHelper(this);
 
 	private boolean shuttingdown = false;
+	private boolean savePass = false;
 
 	/**Version of the bot*/
 	public static final String version = "C3 Java IRC Bot - V0.5.W";
@@ -82,13 +83,14 @@ public class ServBot extends PircBot {
 	 * Call to connect bots to default server assigned to them. Assumes call is from console and will ask console for missing information.
 	 */
 	public void connectConsole(){
+		if (isConnected()) return;
 		this.setAutoNickChange(true);
 		if (server == null){
 			String newServer = Main.readConsole("Please enter a server address.\n");
 			server = new IRCServer(newServer);
 		}
 		try {
-			this.connect(server.getServerAddress());//TODO add support for saving port numbers and server passwords
+			this.connect(server.getServerAddress(), server.getServerPort());//TODO add support for saving port numbers and server passwords
 			while (!isConnected()){//wait till successfully connected
 				Thread.sleep(5000);
 			}
@@ -96,6 +98,7 @@ public class ServBot extends PircBot {
 			String pass;
 			if (loginPass != null){
 				pass = loginPass;
+				savePass = true;
 			}
 			else{
 				Thread.sleep(5000);
@@ -106,7 +109,7 @@ public class ServBot extends PircBot {
 				Thread.sleep(1000);
 				changeNick(this.getName());
 			}
-			identify(pass);
+			if (!pass.isEmpty())identify(pass);
 			Thread.sleep(1000);
 			if (server.getChannelNames().size() == 0){ //if no default channels then connect to a new ones
 				String newChannel = Main.readConsole("Please enter a channel name to connect to.\n");
@@ -143,9 +146,49 @@ public class ServBot extends PircBot {
 	 * Method to make bot connect to supplied server. 
 	 * @param newServer New server to connect to
 	 */
-	public void connectCommand(IRCServer newServer){
-		//TODO make this and make exception to be thrown if already connected to a server.
-		//do i make this recieve a server or use the one saved by the bot? It does need a server otherwise it won't be controllable.
+	public boolean connectCommand(){
+		if (isConnected()) return false;
+		if (server == null) return false;
+		this.setAutoNickChange(true);
+		boolean identPass = true; //true if supplied pass is for nickserv, false if pass is for server
+		try {
+			connect(server.getServerAddress(), server.getServerPort());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return false;
+		} catch (IrcException e1) {
+			if (loginPass == null) return false;
+			try {
+				connect(server.getServerAddress(), server.getServerPort(), loginPass);
+				identPass = false;
+			} catch (IOException | IrcException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		try{
+			while (!isConnected()){//wait till successfully connected
+				Thread.sleep(5000);
+			}
+			//verify login
+			String pass;
+			if (loginPass != null && identPass){
+				pass = loginPass;
+				if(!this.getName().equals(this.getNick())){//bot has a secondary name. GHOST primary nickname and then take it!
+					sendMessage("NickServ", "GHOST " + this.getName() + " " + pass.toString());
+					Thread.sleep(1000);
+					changeNick(this.getName());
+				}
+				identify(pass);
+			}
+			Main.save();
+		} catch (IOException e){//TODO how to manage exceptions? return to console?
+			// failed to save
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 
@@ -171,6 +214,13 @@ public class ServBot extends PircBot {
 	 */
 	public String getOwner() {
 		return owner;
+	}
+
+	/**
+	 * @return the savePass
+	 */
+	public boolean isPassSaved() {
+		return savePass;
 	}
 
 	/**
@@ -241,19 +291,19 @@ public class ServBot extends PircBot {
 	}
 
 	protected void onKick(String channel, String kickerNick, String login,
-				String hostname, String recipientNick, String reason) {
-			if (recipientNick.equalsIgnoreCase(getNick())) {
-				joinChannel(channel);
-				sendMessage(channel, "Guess who is baaaaack!");
-				sendNotice(kickerNick, "Please use the shutdown command to safely shut down me. I don't like being kicked.");
-			}
+			String hostname, String recipientNick, String reason) {
+		if (recipientNick.equalsIgnoreCase(getNick())) {
+			joinChannel(channel);
+			sendMessage(channel, "Guess who is baaaaack!");
+			sendNotice(kickerNick, "Please use the shutdown command to safely shut down me. I don't like being kicked.");
 		}
+	}
 
 	@Override
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 		if (message.startsWith(commandStart)){
-			
+
 			String lowercaseCommand = message.toLowerCase(Locale.ROOT).split(" ")[0].substring(ServBot.commandStart.length());
 			commandHelper.runBotCommand(this, channel, sender, message, lowercaseCommand);
 		}
@@ -279,13 +329,13 @@ public class ServBot extends PircBot {
 	@Override
 	protected void onNotice(String sourceNick, String sourceLogin,
 			String sourceHostname, String target, String notice) {
-		
+
 		//sendNotice(sourceNick, "What are you trying to notify me about? Has timmy fallen down the well?!");
 	}
 
 	@Override
 	protected void onOp(String channel, String sourceNick, String sourceLogin,
-		String sourceHostname, String recipient) {
+			String sourceHostname, String recipient) {
 		IRCChannel currChannel = server.getChannel(channel);
 		Set<String> opList = currChannel.getOpList();
 		if (recipient.equals(this.getNick())){
@@ -370,7 +420,7 @@ public class ServBot extends PircBot {
 	public void setVoiceUsers(boolean voiceUsers) {
 		this.voiceUsers = voiceUsers;
 	}
-	
+
 	/**
 	 * Method to have the bot join a channel in the current server. Use this instead of pircbot joinChannel.
 	 * @param channel Channel to join
@@ -384,7 +434,7 @@ public class ServBot extends PircBot {
 				if (currChannel.equalsIgnoreCase(channel)){
 					return true;
 				}
-				
+
 			}
 			numAttempts++;
 			if (numAttempts > 10){
@@ -398,7 +448,7 @@ public class ServBot extends PircBot {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method to have the bot join a channel in the current server. Use this instead of pircbot joinChannel.
 	 * @param channel Channel to join
@@ -407,16 +457,16 @@ public class ServBot extends PircBot {
 	public boolean joinIRCChannel(String channel, String pass){
 		joinChannel(channel, pass);
 		server.addChannel(new IRCChannel(channel, pass));
-		int numAttempts = 0;
+		int numChecks = 0;
 		while (true){
 			for(String currChannel:getChannels()){
 				if (currChannel.equalsIgnoreCase(channel)){
 					return true;
 				}
-				
+
 			}
-			numAttempts++;
-			if (numAttempts > 10){
+			numChecks++;
+			if (numChecks > 10){
 				server.removeChannel(channel);
 				return false;
 			}

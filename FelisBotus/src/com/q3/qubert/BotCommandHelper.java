@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import com.q3.qubert.irc.IRCChannel;
+import com.q3.qubert.irc.IRCServer;
 import com.q3.qubert.streamAPIs.beam.Beam_API;
 import com.q3.qubert.streamAPIs.beam.Beam_Stream;
 import com.q3.qubert.streamAPIs.hitBox.HitBox_API;
@@ -353,27 +354,47 @@ public class BotCommandHelper {
 				}
 				else{
 					String[] splitMessage = message.split(" ");
-					
+					ServBot bot;
 					if (splitMessage[1].startsWith("#")){
-						
-					}
-					
-					
-					if (parentBot.getIRCServer().isConnectedTo(splitMessage[1])){
-						parentBot.sendNotice(sender, "This bot is already connected to that channel");
-					}
-					else if (splitMessage.length == 2){
-						if(parentBot.joinIRCChannel(splitMessage[1])){
-							parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
-						} else{
-							parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct and that there is no password required.");
+						bot = parentBot;
+					} else {
+						bot = Main.getBotConnectedTo(splitMessage[1]);	
+						if (bot == null){
+							String pass = splitMessage[2].startsWith("#") ? null : splitMessage[2];
+							IRCServer newServ = new IRCServer(splitMessage[1]);
+							bot = new ServBot(parentBot.getName(), parentBot.getOwner(), parentBot.getLogin(), pass, newServ);
+							if (Main.addBot(bot)){
+								parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
+							} else {
+								parentBot.sendNotice(sender, "Unable to join " + splitMessage[1] + ". Please check all details are correct");
+								return;
+							}
 						}
 					}
-					else if (splitMessage.length == 3){ //password supplied
-						if (parentBot.joinIRCChannel(splitMessage[1], splitMessage[2])){
-							parentBot.sendNotice(sender, "Successfully joined " + splitMessage[1]);
-						} else{
-							parentBot.sendNotice(sender, "unable to join " + splitMessage[1] + ". Please check details are correct.");
+					for (int i = 1; i < splitMessage.length; i++){ //connect to channels
+						if (splitMessage[i].startsWith("#")){
+							String channel = splitMessage[i];
+							String pass = null;
+							boolean success = false;
+							if (i<splitMessage.length-1 && !splitMessage[i+1].startsWith("#")){
+								pass = splitMessage[i+1];
+								success = bot.joinIRCChannel(channel, pass);
+								i++; //read the password for this channel, skips ahead so don't attempt to connect to a channel named the password
+							}
+							else{
+								success = bot.joinIRCChannel(channel);
+							}
+							
+							if (success){
+								parentBot.sendNotice(sender, "Successfully joined " + splitMessage[i]);
+							}else{
+								parentBot.sendNotice(sender, "unable to join " + splitMessage[i] + ". Please check details are correct and that there is no password required.");
+							}
+						}
+						try {
+							Main.save();
+						} catch (IOException e) {
+							// failed to save
 						}
 					}
 				}
