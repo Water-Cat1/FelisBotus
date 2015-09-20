@@ -13,8 +13,9 @@ import java.util.TreeMap;
  */
 public class IRCServer {
 
-	private Map<String, IRCChannel> channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
+	private Map<String, IRCChannel> channels;
 	private String serverAddress;
+	private int serverPort = 6667;
 
 
 	/**
@@ -24,8 +25,11 @@ public class IRCServer {
 	 */
 	public IRCServer(String serverAddress,
 			Set<IRCChannel> channels) {
-		super();
-		this.serverAddress = serverAddress;
+		String[] splitAddress = serverAddress.split(":");
+		this.serverAddress = splitAddress[0];
+		if (splitAddress.length>1){
+			this.serverPort = Integer.parseInt(splitAddress[1]);
+		}
 		for (IRCChannel currChannel:channels){
 			this.channels.put(currChannel.getName(), currChannel);
 		}
@@ -37,7 +41,11 @@ public class IRCServer {
 	 */
 	public IRCServer(String serverAddress) {
 		super();
-		this.serverAddress = serverAddress;
+		String[] splitAddress = serverAddress.split(":");
+		this.serverAddress = splitAddress[0];
+		if (splitAddress.length>1){
+			this.serverPort = Integer.parseInt(splitAddress[1]);
+		}
 		this.channels = new TreeMap<String, IRCChannel>(String.CASE_INSENSITIVE_ORDER);
 	}
 
@@ -76,6 +84,13 @@ public class IRCServer {
 	 */
 	public String getServerAddress() {
 		return serverAddress;
+	}
+
+	/**
+	 * @return the serverPort
+	 */
+	public int getServerPort() {
+		return serverPort;
 	}
 
 	/**
