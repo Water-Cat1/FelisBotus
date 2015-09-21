@@ -295,7 +295,7 @@ public class ServBot extends PircBot {
 		if (recipientNick.equalsIgnoreCase(getNick())) {
 			joinChannel(channel);
 			sendMessage(channel, "Guess who is baaaaack!");
-			sendNotice(kickerNick, "Please use the shutdown command to safely shut down me. I don't like being kicked.");
+			sendNotice(kickerNick, "Please use the shutdown command to safely shut me down. I don't like being kicked.");
 		}
 	}
 

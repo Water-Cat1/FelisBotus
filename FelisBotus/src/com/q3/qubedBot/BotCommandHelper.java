@@ -18,11 +18,11 @@ public class BotCommandHelper {
 
 	private ServBot parentBot;
 
-	public BotCommandHelper(ServBot felisBotus) {
-		parentBot = felisBotus;
+	public BotCommandHelper(ServBot qubedBot) {
+		parentBot = qubedBot;
 	}
 
-	public void runBotCommand(ServBot felisBotus, String channel, String sender, String message, String lowercaseCommand) {
+	public void runBotCommand(ServBot qubedBot, String channel, String sender, String message, String lowercaseCommand) {
 		boolean isOp = false;
 		if (channel.equalsIgnoreCase(sender)){ //private message!
 			for (IRCChannel currChannel:parentBot.getIRCServer().getChannels()){
@@ -77,10 +77,10 @@ public class BotCommandHelper {
 		default:
 			String response = Main.getResponse(lowercaseCommand);
 			if (response != null){
-				felisBotus.sendMessage(channel, response);
+				qubedBot.sendMessage(channel, response);
 			}
 			else{
-				felisBotus.sendNotice(sender, lowercaseCommand + " is an invalid command, please ensure it is spelled correctly");
+				qubedBot.sendNotice(sender, lowercaseCommand + " is an invalid command, please ensure it is spelled correctly");
 			}
 
 		}
@@ -103,6 +103,7 @@ public class BotCommandHelper {
 				rolls[i] = String.valueOf(currRoll);
 				total += currRoll;
 			}
+			// TODO <String.join> is not java 1.7 compatible. Throws error when running on server.
 			parentBot.sendMessage(channel, String.format("%s rolled a %d (Individual rolls: %s)", sender, total, String.join(", ", rolls)));
 		}
 	}
