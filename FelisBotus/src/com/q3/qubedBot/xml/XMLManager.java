@@ -42,7 +42,7 @@ public class XMLManager {
 	public static boolean compileConfigFile(List<ServBot> bots, Map<String, String> commands, List<String> streamersTwitch) throws IOException {
 		Document doc = new Document();
 		//root setup
-		Element elemRoot = new Element("FelisBotusConfig");//<FelisBotusConfig>
+		Element elemRoot = new Element("QubedBotConfig");//<Config>
 		Element elemBotList = new Element("BotList");//<BotList>
 		if (bots != null){
 			for (ServBot currBot:bots){
@@ -100,7 +100,7 @@ public class XMLManager {
 		}
 		elemStreamerList.addContent(elemStreamersTwitch);//</Twitch>
 		elemRoot.addContent(elemStreamerList);//</Streamers>
-		doc.setRootElement(elemRoot); //</FelisBotusConfig>
+		doc.setRootElement(elemRoot); //</Config>
 
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
 		xmlOut.output(doc, new FileWriter(new File(Main.configFile)));
